@@ -30,7 +30,8 @@ class CreateAccountFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        (activity as AppCompatActivity).supportActionBar?.title = "Création de compte"
+        (activity as AppCompatActivity).supportActionBar?.show()
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         binding = CreateAccountFragmentBinding.inflate(inflater, container, false)
         return binding.root

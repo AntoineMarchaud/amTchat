@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.amarchaud.amtchat.ui.splash.SplashFragment"
-        android:label="splash_fragment"
+        android:label="Splash"
         tools:layout="@layout/splash_fragment">
         <action
             android:id="@+id/action_splashFragment_to_lastMessagesFragment"
@@ -23,7 +23,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.amarchaud.amtchat.ui.login.LoginFragment"
-        android:label="login_fragment"
+        android:label="Login"
         tools:layout="@layout/login_fragment">
         <action
             android:id="@+id/action_loginFragment_to_lastMessagesFragment"
@@ -34,7 +34,7 @@
     <fragment
         android:id="@+id/lastMessagesFragment"
         android:name="com.amarchaud.amtchat.ui.lastmessages.LastMessagesFragment"
-        android:label="last_messages_fragment"
+        android:label="Last messages"
         tools:layout="@layout/last_messages_fragment">
         <action
             android:id="@+id/action_lastMessagesFragment_to_newMessageFragment"
@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/createAccountFragment"
         android:name="com.amarchaud.amtchat.ui.createaccount.CreateAccountFragment"
-        android:label="create_account_fragment"
+        android:label="Create account"
         tools:layout="@layout/create_account_fragment">
         <action
             android:id="@+id/action_createAccountFragment_to_lastMessagesFragment"
@@ -61,7 +61,7 @@
     <fragment
         android:id="@+id/newMessageFragment"
         android:name="com.amarchaud.amtchat.ui.chooseuser.ChooseUserFragment"
-        android:label="new_message_fragment"
+        android:label="New message"
         tools:layout="@layout/choose_user_fragment">
         <action
             android:id="@+id/action_newMessageFragment_to_chatFragment"
@@ -71,7 +71,6 @@
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.amarchaud.amtchat.ui.chat.ChatFragment"
-        android:label="chat_fragment"
         tools:layout="@layout/chat_fragment" >
         <argument
             android:name="ChatUser"

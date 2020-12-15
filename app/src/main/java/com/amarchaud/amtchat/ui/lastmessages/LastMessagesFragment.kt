@@ -1,19 +1,20 @@
 package com.amarchaud.amtchat.ui.lastmessages
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amarchaud.amtchat.MainActivity
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
-import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
-import com.google.firebase.auth.FirebaseAuth
+
 
 class LastMessagesFragment : Fragment() {
 
@@ -33,7 +34,8 @@ class LastMessagesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        (activity as AppCompatActivity).supportActionBar?.title = "Mes messages"
+        (activity as AppCompatActivity).supportActionBar?.show()
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         setHasOptionsMenu(true)
 
         binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
@@ -57,7 +59,11 @@ class LastMessagesFragment : Fragment() {
         viewModel.listOfLastMessagesLiveData.observe(viewLifecycleOwner) { users: List<ItemLastMessageViewModel> ->
             lastMessagesRecyclerAdapter.submitList(users)
         }
+
+        val nbFragment = (requireActivity() as MainActivity).getStackCount()
+        Log.d("LastMessagesFragment", "nb Fragments : $nbFragment")
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.nav_menu, menu)

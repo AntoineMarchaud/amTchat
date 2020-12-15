@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import com.amarchaud.amtchat.databinding.SplashFragmentBinding
 
@@ -22,6 +23,9 @@ class SplashFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        (activity as AppCompatActivity).supportActionBar?.hide()
+
         binding = SplashFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
