@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">amTchat</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="emailEntry">Enter your email</string>
+    <string name="password">Enter your password</string>
+    <string name="userName">Username</string>
+    <string name="login">Login</string>
+    <string name="backToRegistration">Back to registration</string>
+    <string name="register">Register</string>
+    <string name="selectPhoto">Select Photo</string>
+    <string name="enterMessage">Enter message</string>
+    <string name="send">Send</string>
+</resources>

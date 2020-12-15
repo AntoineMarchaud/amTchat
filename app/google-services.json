@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1043361521937",
+    "project_id": "amtchat-b660b",
+    "storage_bucket": "amtchat-b660b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043361521937:android:28ce326a4a33165046acb0",
+        "android_client_info": {
+          "package_name": "com.amarchaud.amtchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043361521937-ci3c6jb2k59ct05um2n57gurkdbn3icg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoXDKIrgYhsvVz_rh0Cv0-cQpwslmZoxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043361521937-ci3c6jb2k59ct05um2n57gurkdbn3icg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

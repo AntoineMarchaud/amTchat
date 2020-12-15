@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.amarchaud.amtchat.ui.splash.SplashFragment"
+        android:label="splash_fragment"
+        tools:layout="@layout/splash_fragment">
+        <action
+            android:id="@+id/action_splashFragment_to_lastMessagesFragment"
+            app:destination="@id/lastMessagesFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_createAccountFragment"
+            app:destination="@id/createAccountFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.amarchaud.amtchat.ui.login.LoginFragment"
+        android:label="login_fragment"
+        tools:layout="@layout/login_fragment">
+        <action
+            android:id="@+id/action_loginFragment_to_lastMessagesFragment"
+            app:destination="@id/lastMessagesFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/lastMessagesFragment"
+        android:name="com.amarchaud.amtchat.ui.lastmessages.LastMessagesFragment"
+        android:label="last_messages_fragment"
+        tools:layout="@layout/last_messages_fragment">
+        <action
+            android:id="@+id/action_lastMessagesFragment_to_newMessageFragment"
+            app:destination="@id/newMessageFragment"
+            app:popUpTo="@id/lastMessagesFragment" />
+        <action
+            android:id="@+id/action_lastMessagesFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createAccountFragment"
+        android:name="com.amarchaud.amtchat.ui.createaccount.CreateAccountFragment"
+        android:label="create_account_fragment"
+        tools:layout="@layout/create_account_fragment">
+        <action
+            android:id="@+id/action_createAccountFragment_to_lastMessagesFragment"
+            app:destination="@id/lastMessagesFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_createAccountFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newMessageFragment"
+        android:name="com.amarchaud.amtchat.ui.chooseuser.ChooseUserFragment"
+        android:label="new_message_fragment"
+        tools:layout="@layout/choose_user_fragment">
+        <action
+            android:id="@+id/action_newMessageFragment_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:popUpTo="@id/lastMessagesFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.amarchaud.amtchat.ui.chat.ChatFragment"
+        android:label="chat_fragment"
+        tools:layout="@layout/chat_fragment" >
+        <argument
+            android:name="MyselfUser"
+            app:argType="com.amarchaud.amtchat.model.FirebaseUserModel" />
+        <argument
+            android:name="ChatUser"
+            app:argType="com.amarchaud.amtchat.model.FirebaseUserModel" />
+    </fragment>
+</navigation>
