@@ -1,18 +1,19 @@
 package com.amarchaud.amtchat.ui.lastmessages
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 class LastMessagesFragment : Fragment() {
 
@@ -33,6 +34,7 @@ class LastMessagesFragment : Fragment() {
     ): View {
 
         (activity as AppCompatActivity).supportActionBar?.title = "Mes messages"
+        setHasOptionsMenu(true)
 
         binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -56,4 +58,32 @@ class LastMessagesFragment : Fragment() {
             lastMessagesRecyclerAdapter.submitList(users)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.nav_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_new_message -> {
+                val action =
+                    LastMessagesFragmentDirections.actionLastMessagesFragmentToNewMessageFragment()
+                Navigation.findNavController(requireView()).navigate(action)
+            }
+            R.id.menu_sign_out -> {
+                //FirebaseAuth.getInstance().signOut()
+
+                /*
+                val action =
+                    LastMessagesFragmentDirections.actionLastMessagesFragmentToCreateAccountFragment()
+                Navigation.findNavController(requireView()).navigate(action)
+
+                 */
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 }
