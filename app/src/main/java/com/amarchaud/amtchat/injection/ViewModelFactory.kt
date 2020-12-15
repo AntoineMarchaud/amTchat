@@ -1,7 +1,6 @@
 package com.amarchaud.amtchat.injection
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.amarchaud.amtchat.model.FirebaseUserModel

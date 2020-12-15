@@ -18,14 +18,11 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import javax.inject.Inject
 
-class CreateAccountViewModel(app: Application) : BaseViewModel(app) {
+class CreateAccountViewModel(private val app: Application) : BaseViewModel(app) {
 
     companion object {
         const val TAG: String = "CreateAccount"
     }
-
-    @Inject
-    lateinit var injectedApplication: Application
 
     @Inject
     lateinit var injectedContentResolver: ContentResolver
@@ -47,14 +44,12 @@ class CreateAccountViewModel(app: Application) : BaseViewModel(app) {
 
     /**
      *  CALLBACK FROM VIEW
-     *
      */
-
     fun onRegister(v: View) {
 
         if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
             Toast.makeText(
-                injectedApplication,
+                app,
                 "Please enter text in email/password",
                 Toast.LENGTH_SHORT
             ).show()
@@ -79,7 +74,7 @@ class CreateAccountViewModel(app: Application) : BaseViewModel(app) {
             .addOnFailureListener {
                 Log.d(TAG, "Failed to create user: ${it.message}")
                 Toast.makeText(
-                    injectedApplication,
+                    app,
                     "Failed to create user: ${it.message}",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -154,7 +149,7 @@ class CreateAccountViewModel(app: Application) : BaseViewModel(app) {
                 Log.d(TAG, "Failed to set value to database: ${it.message}")
 
                 Toast.makeText(
-                    injectedApplication,
+                    app,
                     "Error when creating user",
                     Toast.LENGTH_SHORT
                 ).show()

@@ -1,9 +1,13 @@
 package com.amarchaud.amtchat.ui.lastmessages
 
 import android.app.Application
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
+import com.amarchaud.amtchat.network.FirebaseAddr
+import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,30 +22,92 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
     }
 
     init {
-        fetchCurrentUser()
+        fetchMySelf()
         fetchLastMessages()
     }
 
-    // todo
-    private fun fetchCurrentUser() {
-        val uid = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$uid")
+    var listOfLastMessagesLiveData: MutableLiveData<List<ItemLastMessageViewModel>> =
+        MutableLiveData()
+
+    var MyselfLiveData: MutableLiveData<FirebaseUserModel> = MutableLiveData()
+
+
+    private fun fetchMySelf() {
+        val myUid: String = FirebaseAuth.getInstance().uid ?: return
+        val ref =
+            FirebaseDatabase.getInstance().getReference("/users/$myUid")
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(FirebaseUserModel::class.java)
+                user?.let {
+                    MyselfLiveData.postValue(it)
+                }
+            }
 
-            override fun onDataChange(p0: DataSnapshot) {
-                val chatMessage = p0.getValue(FirebaseChatMessageModel::class.java)
+            override fun onCancelled(error: DatabaseError) {
 
+            }
+
+
+        })
+    }
+
+    private fun fetchLastMessages() {
+        val myUid: String = FirebaseAuth.getInstance().uid ?: return
+
+        val ref =
+            FirebaseDatabase.getInstance().getReference(FirebaseAddr.loadAllMessagesOfUser(myUid))
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {// appelé qu'une fois
+
+            override fun onDataChange(nodeConversationOf: DataSnapshot) {
+
+                val listOfLastMessage: MutableList<ItemLastMessageViewModel> = mutableListOf()
+
+                nodeConversationOf.children.forEach { nodeWith: DataSnapshot ->
+
+                    Log.d(TAG, "Load all conversation with : ${nodeWith.key}")
+
+                    // get last message
+                    val lastmessageModel =
+                        nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
+                    lastmessageModel?.let { lastMessageModel ->
+
+                        // get photo
+                        val idToLoad =
+                            if (lastMessageModel.fromId == myUid) lastMessageModel.toId else lastMessageModel.fromId
+                        val refUser =
+                            FirebaseDatabase.getInstance().getReference("/users/$idToLoad")
+                        refUser.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(nodeUser: DataSnapshot) {
+                                Log.d(TAG, "Try load photo of : ${nodeUser.key}")
+
+                                val user = nodeUser.getValue(FirebaseUserModel::class.java)
+                                user?.let { userTo ->
+                                    listOfLastMessage.add(
+                                        ItemLastMessageViewModel(
+                                            userTo,
+                                            lastMessageModel
+                                        )
+                                    )
+
+                                    listOfLastMessagesLiveData.postValue(listOfLastMessage)
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+
+                            }
+
+                        })
+
+
+                    }
+                }
             }
 
             override fun onCancelled(p0: DatabaseError) {
 
             }
         })
-    }
-
-    private fun fetchLastMessages() {
-        val fromId = FirebaseAuth.getInstance().uid
-
-
     }
 }

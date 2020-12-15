@@ -8,6 +8,9 @@ import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import io.reactivex.rxjava3.core.Observable
 
+/**
+ * No Use : everything is saved in Firebase  !
+ */
 @Dao
 interface AmTchatDao {
 

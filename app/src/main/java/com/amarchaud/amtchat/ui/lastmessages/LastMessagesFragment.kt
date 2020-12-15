@@ -47,15 +47,17 @@ class LastMessagesFragment : Fragment() {
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
         binding.lastMessagesRecyclerView.adapter = lastMessagesRecyclerAdapter
 
-        /*
-        viewModel.lastMessagesLiveData.observe(viewLifecycleOwner) { users: List<ItemLastMessageViewModel> ->
-            lastMessagesRecyclerAdapter.submitList(users)
-        }*/
-
         binding.newMessage.setOnClickListener {
             val action =
                 LastMessagesFragmentDirections.actionLastMessagesFragmentToNewMessageFragment()
             Navigation.findNavController(view).navigate(action)
         }
+
+        viewModel.listOfLastMessagesLiveData.observe(viewLifecycleOwner) { users: List<ItemLastMessageViewModel> ->
+            lastMessagesRecyclerAdapter.submitList(users)
+        }
+        viewModel.MyselfLiveData.observe(viewLifecycleOwner, {
+            lastMessagesRecyclerAdapter.Myself = it
+        })
     }
 }

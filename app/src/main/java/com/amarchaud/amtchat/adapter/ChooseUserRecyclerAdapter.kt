@@ -27,12 +27,12 @@ class ChooseUserRecyclerAdapter :
     }
 
     override fun onBindViewHolder(holder: NewMessageViewHolder, position: Int) {
-        val contentItem: FirebaseUserModel = getItem(position)
-        holder.binding.firebaseUser = contentItem
+        val ToUser: FirebaseUserModel = getItem(position)
+        holder.binding.firebaseUser = ToUser
 
         // passage a l'écran Chat !
         holder.itemView.setOnClickListener {
-            val action = ChooseUserFragmentDirections.actionNewMessageFragmentToChatFragment(Myself, contentItem)
+            val action = ChooseUserFragmentDirections.actionNewMessageFragmentToChatFragment(Myself, ToUser)
             Navigation.findNavController(it).navigate(action)
         }
     }

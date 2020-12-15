@@ -1,5 +1,6 @@
 package com.amarchaud.amtchat.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -17,6 +18,7 @@ class ChatRecyclerAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(
     ) {
 
+    var context : Context? = null
     var elements: List<ItemChatViewModel> = mutableListOf()
 
     private val myUid = FirebaseAuth.getInstance().uid
@@ -54,7 +56,6 @@ class ChatRecyclerAdapter :
                         false
                     )
                 )
-
         }
     }
 
@@ -69,6 +70,8 @@ class ChatRecyclerAdapter :
 
         // item est le ViewModel
         val item = elements[position]
+
+        //println("totototootototot : pos $position - $item")
 
         holder.itemView.setOnLongClickListener {
 
@@ -92,14 +95,14 @@ class ChatRecyclerAdapter :
                                      * Update Firebase message
                                      */
                                     val fromRef = FirebaseDatabase.getInstance().getReference(
-                                        FirebaseAddr.loadUserMessage(
+                                        FirebaseAddr.loadUserMessageForOnePerso(
                                             firebaseChatMessageModel.fromId,
                                             firebaseChatMessageModel.toId
                                         )
                                     ).child(firebaseChatMessageModel.id)
 
                                     val toRef = FirebaseDatabase.getInstance().getReference(
-                                        FirebaseAddr.loadUserMessage(
+                                        FirebaseAddr.loadUserMessageForOnePerso(
                                             firebaseChatMessageModel.toId,
                                             firebaseChatMessageModel.fromId
                                         )
@@ -111,6 +114,7 @@ class ChatRecyclerAdapter :
                                     fromRef.setValue(firebaseChatMessageModel)
                                     toRef.setValue(firebaseChatMessageModel)
 
+                                    // todo is it useful ? when a item changed, the recycler will be called via - ChatRecyclerViewModel
                                     //notifyItemChanged(position)
                                 }
                             }

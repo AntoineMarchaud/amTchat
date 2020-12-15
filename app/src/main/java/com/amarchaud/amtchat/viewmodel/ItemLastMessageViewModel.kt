@@ -1,7 +1,9 @@
 package com.amarchaud.amtchat.viewmodel
 
+import com.amarchaud.amtchat.model.FirebaseChatMessageModel
+import com.amarchaud.amtchat.model.FirebaseUserModel
+
 data class ItemLastMessageViewModel(
-    val username: String? = null,
-    val lastMessage: String? = null,
-    val photoUrl: String? = null
+    val lastConvUser: FirebaseUserModel,
+    val lastConvChat: FirebaseChatMessageModel
 )

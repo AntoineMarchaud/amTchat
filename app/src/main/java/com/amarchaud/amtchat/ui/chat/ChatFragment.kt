@@ -36,6 +36,8 @@ class ChatFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = args.ChatUser.username
 
+        chatRecyclerAdapter.context = this.context
+
         binding = ChatFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,7 +56,7 @@ class ChatFragment : Fragment() {
         binding.recyclerviewChatLog.adapter = chatRecyclerAdapter
 
         /**
-         * Appelé a chaque nouveau message
+         * Appeler a l'update / ajout / destruction d'un message
          */
         viewModel.listOfMessagesLiveData.observe(viewLifecycleOwner, {
             chatRecyclerAdapter.elements = it.first

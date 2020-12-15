@@ -22,7 +22,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginStart="16dp"
-            app:onImageLoadFromUrl="@{ItemLastMessageViewModel.photoUrl}" />
+            app:onImageLoadFromUrl="@{ItemLastMessageViewModel.lastConvUser.profileImageUrl}" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -35,14 +35,14 @@
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{ItemLastMessageViewModel.username}"
+                android:text="@{ItemLastMessageViewModel.lastConvUser.username}"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/lastmessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{ItemLastMessageViewModel.lastMessage}" />
+                android:text="@{ItemLastMessageViewModel.lastConvChat.text}" />
 
         </LinearLayout>
 

@@ -52,7 +52,7 @@ class ChatViewModel(
         val userUid = ChatUser.uid
 
         val ref = FirebaseDatabase.getInstance().getReference(
-            FirebaseAddr.loadUserMessage(myUid, userUid)
+            FirebaseAddr.loadUserMessageForOnePerso(myUid, userUid)
         )
         ref.addChildEventListener(object :
             ChildEventListener { // appelé chaque fois qu'un truc apparait coté base
@@ -142,18 +142,18 @@ class ChatViewModel(
     fun onSendMessage(v: View) {
 
         val myUid = MyselfUser.uid
-        val userUid = ChatUser.uid ?: return
+        val userUid = ChatUser.uid
 
         /**
          * Create duplicate
          */
 
         val fromRef = FirebaseDatabase.getInstance().getReference(
-            FirebaseAddr.loadUserMessage(myUid, userUid)
+            FirebaseAddr.loadUserMessageForOnePerso(myUid, userUid)
         ).push()
 
         val toRef = FirebaseDatabase.getInstance().getReference(
-            FirebaseAddr.loadUserMessage(userUid, myUid) + "/" + fromRef.key
+            FirebaseAddr.loadUserMessageForOnePerso(userUid, myUid) + "/" + fromRef.key
         )
 
         theMessage?.let { theMessageNotNull ->
