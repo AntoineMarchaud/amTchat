@@ -2,45 +2,45 @@ package com.amarchaud.amtchat.ui.splash
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavDirections
-import androidx.navigation.Navigation
 import com.amarchaud.amtchat.base.BaseViewModel
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
+import com.amarchaud.amtchat.base.PersonalInformations
+import com.amarchaud.amtchat.base.PersonalInformationsListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class SplashViewModel(app: Application) : BaseViewModel(app) {
+class SplashViewModel(app: Application) : BaseViewModel(app), PersonalInformationsListener {
 
     val actionLiveData: MutableLiveData<NavDirections> = MutableLiveData()
 
     init {
-        lateinit var action: NavDirections;
+        PersonalInformations.listener = this
+        PersonalInformations.updateMyself()
+        //val user = FirebaseAuth.getInstance().currentUser
+    }
 
-        val f = FirebaseApp.initializeApp(app)
-        if (f != null) {
-            val user = FirebaseAuth.getInstance().currentUser
+    override fun onFirebaseInfoUserFinish() {
+        Observable.timer(1000, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                actionLiveData.postValue( SplashFragmentDirections.actionSplashFragmentToLastMessagesFragment())
+            }
+    }
 
-            Observable.timer(2000, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (user == null) {
-                        action =
-                            SplashFragmentDirections.actionSplashFragmentToCreateAccountFragment()
-                    } else {
-                        action =
-                            SplashFragmentDirections.actionSplashFragmentToLastMessagesFragment()
-                    }
+    override fun onFirebaseInfoNoUser() {
+        Observable.timer(2000, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                actionLiveData.postValue(SplashFragmentDirections.actionSplashFragmentToCreateAccountFragment())
+            }
+    }
 
-                    actionLiveData.postValue(action)
-                };
-
-
-        }
+    override fun onCleared() {
+        super.onCleared()
+        PersonalInformations.listener = null
     }
 }

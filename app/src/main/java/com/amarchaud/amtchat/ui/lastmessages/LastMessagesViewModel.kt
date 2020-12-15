@@ -22,35 +22,11 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
     }
 
     init {
-        fetchMySelf()
         fetchLastMessages()
     }
 
     var listOfLastMessagesLiveData: MutableLiveData<List<ItemLastMessageViewModel>> =
         MutableLiveData()
-
-    var MyselfLiveData: MutableLiveData<FirebaseUserModel> = MutableLiveData()
-
-
-    private fun fetchMySelf() {
-        val myUid: String = FirebaseAuth.getInstance().uid ?: return
-        val ref =
-            FirebaseDatabase.getInstance().getReference("/users/$myUid")
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue(FirebaseUserModel::class.java)
-                user?.let {
-                    MyselfLiveData.postValue(it)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
-
-        })
-    }
 
     private fun fetchLastMessages() {
         val myUid: String = FirebaseAuth.getInstance().uid ?: return

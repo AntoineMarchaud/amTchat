@@ -74,9 +74,6 @@
         android:label="chat_fragment"
         tools:layout="@layout/chat_fragment" >
         <argument
-            android:name="MyselfUser"
-            app:argType="com.amarchaud.amtchat.model.FirebaseUserModel" />
-        <argument
             android:name="ChatUser"
             app:argType="com.amarchaud.amtchat.model.FirebaseUserModel" />
     </fragment>

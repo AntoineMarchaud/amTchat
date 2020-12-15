@@ -10,6 +10,8 @@ import androidx.databinding.Bindable
 import androidx.navigation.NavDirections
 import com.amarchaud.amtchat.BR
 import com.amarchaud.amtchat.base.BaseViewModel
+import com.amarchaud.amtchat.base.PersonalInformations
+import com.amarchaud.amtchat.base.PersonalInformationsListener
 import com.amarchaud.amtchat.base.SingleLiveEvent
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +20,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import javax.inject.Inject
 
-class CreateAccountViewModel(private val app: Application) : BaseViewModel(app) {
+class CreateAccountViewModel(private val app: Application) : BaseViewModel(app), PersonalInformationsListener {
 
     companion object {
         const val TAG: String = "CreateAccount"
@@ -141,9 +143,8 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app) 
             .addOnSuccessListener {
                 Log.d(TAG, "Finally we saved the user to Firebase Database")
 
-                val action: NavDirections =
-                    CreateAccountFragmentDirections.actionCreateAccountFragmentToLastMessagesFragment()
-                actionToNextScreen.postValue(action)
+                PersonalInformations.listener = this
+                PersonalInformations.updateMyself()
             }
             .addOnFailureListener {
                 Log.d(TAG, "Failed to set value to database: ${it.message}")
@@ -154,5 +155,24 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app) 
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    override fun onFirebaseInfoUserFinish() {
+        val action: NavDirections =
+            CreateAccountFragmentDirections.actionCreateAccountFragmentToLastMessagesFragment()
+        actionToNextScreen.postValue(action)
+    }
+
+    override fun onFirebaseInfoNoUser() {
+        Toast.makeText(
+            app,
+            "Error register, please retry",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        PersonalInformations.listener = null
     }
 }

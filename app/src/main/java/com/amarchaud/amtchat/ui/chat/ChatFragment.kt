@@ -47,7 +47,7 @@ class ChatFragment : Fragment() {
 
         viewModel = ViewModelProvider(
             this,
-            ViewModelFactory(activity?.application!!, args.MyselfUser, args.ChatUser)
+            ViewModelFactory(activity?.application!!, args.ChatUser)
         ).get(ChatViewModel::class.java)
         binding.chatViewModel = viewModel
 

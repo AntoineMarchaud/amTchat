@@ -10,10 +10,12 @@ import androidx.databinding.Bindable
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDirections
 import com.amarchaud.amtchat.base.BaseViewModel
+import com.amarchaud.amtchat.base.PersonalInformations
+import com.amarchaud.amtchat.base.PersonalInformationsListener
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
-class LoginViewModel(app: Application) : BaseViewModel(app) {
+class LoginViewModel(private val app: Application) : BaseViewModel(app), PersonalInformationsListener {
 
     companion object {
         const val TAG : String = "Login"
@@ -46,11 +48,29 @@ class LoginViewModel(app: Application) : BaseViewModel(app) {
 
                 Log.d(TAG, "Successfully logged in: ${it.result?.user?.uid}")
 
-                val action: NavDirections = LoginFragmentDirections.actionLoginFragmentToLastMessagesFragment()
-                actionLiveData.postValue(action)
+                PersonalInformations.listener = this
+                PersonalInformations.updateMyself()
             }
             .addOnFailureListener {
                 Toast.makeText(injectedApplication, "$TAG Failed to log in: ${it.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    override fun onFirebaseInfoUserFinish() {
+        val action: NavDirections = LoginFragmentDirections.actionLoginFragmentToLastMessagesFragment()
+        actionLiveData.postValue(action)
+    }
+
+    override fun onFirebaseInfoNoUser() {
+        Toast.makeText(
+            app,
+            "Error login, please retry",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        PersonalInformations.listener = null
     }
 }

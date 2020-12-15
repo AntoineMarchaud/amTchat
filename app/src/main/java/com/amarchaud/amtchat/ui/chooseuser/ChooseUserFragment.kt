@@ -16,7 +16,6 @@ class ChooseUserFragment : Fragment() {
 
     companion object {
         fun newInstance() = ChooseUserFragment()
-        val USER_KEY = "USER_KEY"
     }
 
     // recycler view
@@ -46,9 +45,6 @@ class ChooseUserFragment : Fragment() {
 
         viewModel.listOfUsersLiveData.observe(viewLifecycleOwner, { users: List<FirebaseUserModel> ->
             chooseUserRecyclerAdapter.submitList(users)
-        })
-        viewModel.MyselfLiveData.observe(viewLifecycleOwner, {
-            chooseUserRecyclerAdapter.Myself = it
         })
     }
 }

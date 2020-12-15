@@ -7,6 +7,7 @@ import androidx.databinding.Bindable
 import androidx.lifecycle.MutableLiveData
 import com.amarchaud.amtchat.BR
 import com.amarchaud.amtchat.base.BaseViewModel
+import com.amarchaud.amtchat.base.PersonalInformations
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
@@ -18,7 +19,6 @@ import com.google.firebase.database.FirebaseDatabase
 
 class ChatViewModel(
     private val app: Application,
-    private val MyselfUser: FirebaseUserModel,
     private val ChatUser: FirebaseUserModel
 ) :
     BaseViewModel(app) {
@@ -48,7 +48,7 @@ class ChatViewModel(
 
     private fun listenForMessages() {
 
-        val myUid = MyselfUser.uid
+        val myUid = PersonalInformations.MySelf?.uid ?: return
         val userUid = ChatUser.uid
 
         val ref = FirebaseDatabase.getInstance().getReference(
@@ -69,7 +69,7 @@ class ChatViewModel(
                         listOfMessages.add(
                             ItemChatViewModel(
                                 chatMessage,
-                                MyselfUser.profileImageUrl
+                                PersonalInformations.MySelf?.profileImageUrl
                             )
                         )
                     else
@@ -141,7 +141,7 @@ class ChatViewModel(
 
     fun onSendMessage(v: View) {
 
-        val myUid = MyselfUser.uid
+        val myUid = PersonalInformations.MySelf?.uid ?: return
         val userUid = ChatUser.uid
 
         /**

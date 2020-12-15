@@ -11,6 +11,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
+import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 
 class LastMessagesFragment : Fragment() {
@@ -34,8 +35,6 @@ class LastMessagesFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = "Mes messages"
 
         binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
-
-
         return binding.root
     }
 
@@ -56,8 +55,5 @@ class LastMessagesFragment : Fragment() {
         viewModel.listOfLastMessagesLiveData.observe(viewLifecycleOwner) { users: List<ItemLastMessageViewModel> ->
             lastMessagesRecyclerAdapter.submitList(users)
         }
-        viewModel.MyselfLiveData.observe(viewLifecycleOwner, {
-            lastMessagesRecyclerAdapter.Myself = it
-        })
     }
 }

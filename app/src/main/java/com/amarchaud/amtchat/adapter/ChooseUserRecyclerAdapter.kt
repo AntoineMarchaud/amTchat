@@ -15,8 +15,6 @@ class ChooseUserRecyclerAdapter :
         DiffCallback()
     ) {
 
-    lateinit var Myself : FirebaseUserModel
-
     class NewMessageViewHolder(var binding: ItemNewMessageBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -32,7 +30,7 @@ class ChooseUserRecyclerAdapter :
 
         // passage a l'écran Chat !
         holder.itemView.setOnClickListener {
-            val action = ChooseUserFragmentDirections.actionNewMessageFragmentToChatFragment(Myself, ToUser)
+            val action = ChooseUserFragmentDirections.actionNewMessageFragmentToChatFragment(ToUser)
             Navigation.findNavController(it).navigate(action)
         }
     }

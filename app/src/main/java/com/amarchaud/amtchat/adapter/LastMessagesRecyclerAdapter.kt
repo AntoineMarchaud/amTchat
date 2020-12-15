@@ -19,16 +19,12 @@ class LastMessagesRecyclerAdapter :
         DiffCallback()
     ) {
 
-    lateinit var Myself : FirebaseUserModel
-
     class LastMessageViewHolder(var binding: ItemLastMessageBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LastMessageViewHolder {
         val layoutInflator = LayoutInflater.from(parent.context)
-        val binding = ItemLastMessageBinding.inflate(layoutInflator, parent, false)
-
-        return LastMessagesRecyclerAdapter.LastMessageViewHolder(
+        return LastMessageViewHolder(
             DataBindingUtil.inflate(
                 layoutInflator,
                 R.layout.item_last_message,
@@ -43,7 +39,7 @@ class LastMessagesRecyclerAdapter :
 
         holder.itemView.setOnClickListener {
             // passage a l'écran chat
-            val action = LastMessagesFragmentDirections.actionLastMessagesFragmentToChatFragment(Myself, contentItem.lastConvUser)
+            val action = LastMessagesFragmentDirections.actionLastMessagesFragmentToChatFragment(contentItem.lastConvUser)
             Navigation.findNavController(it).navigate(action)
         }
     }
@@ -64,6 +60,4 @@ class LastMessagesRecyclerAdapter :
             return oldItem == newItem
         }
     }
-
-
 }
