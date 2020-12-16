@@ -70,8 +70,7 @@
         <action
             android:id="@+id/action_newMessageFragment_to_chatFragment"
             app:destination="@id/chatFragment"
-            app:popUpTo="@id/newMessageFragment"
-            app:popUpToInclusive="true" />
+            app:popUpTo="@id/lastMessagesFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
