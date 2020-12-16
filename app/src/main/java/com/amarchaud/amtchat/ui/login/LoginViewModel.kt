@@ -12,6 +12,7 @@ import androidx.navigation.NavDirections
 import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.base.PersonalInformations
 import com.amarchaud.amtchat.base.PersonalInformationsListener
+import com.amarchaud.amtchat.base.SingleLiveEvent
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
@@ -19,9 +20,6 @@ class LoginViewModel(private val app: Application) : BaseViewModel(app), Persona
 
     companion object {
         const val TAG : String = "Login"
-    }
-    init {
-        println("$TAG init")
     }
 
     @Inject
@@ -33,7 +31,7 @@ class LoginViewModel(private val app: Application) : BaseViewModel(app), Persona
     @Bindable
     var password: String? = null
 
-    val actionLiveData: MutableLiveData<NavDirections> = MutableLiveData()
+    val actionLiveData: SingleLiveEvent<NavDirections> = SingleLiveEvent()
 
     fun onLoginClick(v: View) {
 
