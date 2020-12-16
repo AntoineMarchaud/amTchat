@@ -65,7 +65,7 @@
     <fragment
         android:id="@+id/newMessageFragment"
         android:name="com.amarchaud.amtchat.ui.chooseuser.ChooseUserFragment"
-        android:label="New message"
+        android:label="Choose User"
         tools:layout="@layout/choose_user_fragment">
         <action
             android:id="@+id/action_newMessageFragment_to_chatFragment"

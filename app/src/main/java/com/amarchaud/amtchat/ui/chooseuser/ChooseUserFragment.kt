@@ -28,9 +28,6 @@ class ChooseUserFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        (activity as AppCompatActivity).supportActionBar?.title = "Choisissez un utilisateur"
-
         binding = ChooseUserFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
