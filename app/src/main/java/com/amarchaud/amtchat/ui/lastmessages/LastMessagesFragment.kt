@@ -13,6 +13,7 @@ import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 
 class LastMessagesFragment : Fragment() {
@@ -35,6 +36,7 @@ class LastMessagesFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.show()
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        setHasOptionsMenu(true)
 
         binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -58,8 +60,7 @@ class LastMessagesFragment : Fragment() {
             lastMessagesRecyclerAdapter.submitList(users)
         }
 
-        val nbFragment = (requireActivity() as MainActivity).getStackCount()
-        Log.d("LastMessagesFragment", "nb Fragments : $nbFragment")
+        (requireActivity() as MainActivity).getStackInfos()
     }
 
 
@@ -77,14 +78,11 @@ class LastMessagesFragment : Fragment() {
                 Navigation.findNavController(requireView()).navigate(action)
             }
             R.id.menu_sign_out -> {
-                //FirebaseAuth.getInstance().signOut()
+                FirebaseAuth.getInstance().signOut()
 
-                /*
                 val action =
                     LastMessagesFragmentDirections.actionLastMessagesFragmentToCreateAccountFragment()
                 Navigation.findNavController(requireView()).navigate(action)
-
-                 */
             }
         }
         return super.onOptionsItemSelected(item)
