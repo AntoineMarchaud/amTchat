@@ -24,6 +24,7 @@ class SplashFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        // only screen with no actionBar
         (activity as AppCompatActivity).supportActionBar?.hide()
 
         binding = SplashFragmentBinding.inflate(inflater, container, false)

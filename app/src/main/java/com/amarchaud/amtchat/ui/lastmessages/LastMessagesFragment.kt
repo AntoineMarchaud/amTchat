@@ -90,20 +90,22 @@ class LastMessagesFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         proceedItemMenuClicked(item)
         return super.onOptionsItemSelected(item)
-    }
 
-    private fun proceedItemMenuClicked(item: MenuItem) {
 
-        // AndroidX Navigation
         /*
+        // AndroidX Navigation : Bug ----> when go back to CreateAccount
+        // if user pressed onBack button, the LastMessagesFragment is displayed again !
+        // todo how to fix it ?
         if(item.itemId == R.id.createAccountFragment) {
             FirebaseAuth.getInstance().signOut()
         }
 
         val navController = findNavController(requireView())
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
-        */
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)*/
+    }
 
+
+    private fun proceedItemMenuClicked(item: MenuItem) {
         when (item.itemId) {
             R.id.newMessageFragment -> {
                 val action =
