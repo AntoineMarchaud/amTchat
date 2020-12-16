@@ -11,3 +11,5 @@ A simple tchat application.
 - Dagger2
 - Glide
 - Bindingadapter
+- Notification 
+- Worker
