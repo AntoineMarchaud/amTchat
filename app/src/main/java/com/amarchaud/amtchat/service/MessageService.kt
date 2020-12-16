@@ -5,38 +5,59 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import com.amarchaud.amtchat.base.PersonalInformations
+import com.amarchaud.amtchat.base.PersonalInformationsListener
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
+import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
+import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 
-class MessageService : Service() {
+class MessageService : Service(), PersonalInformationsListener {
 
     companion object {
         const val TAG = "MessageService"
     }
 
-    // Binder given to clients
-    private val binder = LocalBinder()
-
-    // put here what Fragment can take !
-
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    inner class LocalBinder : Binder() {
-        // Return this instance of ListenMessageService so clients can call public methods
-        val service: MessageService
-            get() = this@MessageService
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        return START_STICKY
     }
 
-    override fun onBind(intent: Intent): IBinder {
-        listenForMessages()
-        return binder
+    override fun onBind(intent: Intent?): IBinder? {
+       return null // dont want to have a relation Activity - Service
+    }
+
+    override fun onCreate() {
+        PersonalInformations.addListener(this)
+    }
+
+    override fun onDestroy() {
+        PersonalInformations.removeListener(this)
+    }
+
+    private fun proceedLastMessage(lastMessageModel: FirebaseChatMessageModel) {
+        val myUid: String = FirebaseAuth.getInstance().uid ?: return
+
+        // get photo
+        val idToLoad =
+            if (lastMessageModel.fromId == myUid) lastMessageModel.toId else lastMessageModel.fromId
+        val refUser =
+            FirebaseDatabase.getInstance().getReference("/users/$idToLoad")
+        refUser.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(nodeUser: DataSnapshot) {
+
+                val user = nodeUser.getValue(FirebaseUserModel::class.java)
+                user?.let { userTo: FirebaseUserModel ->
+                    // show a Pop-up to user !
+                    Log.d(TAG, "want to show pupup with $userTo - $lastMessageModel")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
     }
 
     private fun listenForMessages() {
@@ -50,29 +71,30 @@ class MessageService : Service() {
 
 
             override fun onChildAdded(
-                nodeConversationOf: DataSnapshot,
+                nodeWith: DataSnapshot,
                 previousChildName: String?
             ) {
+                Log.d(LastMessagesViewModel.TAG, "onChildAdded : ${nodeWith.key}")
+                val lastMessageModel =
+                    nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
+                Log.d(LastMessagesViewModel.TAG, lastMessageModel.toString())
 
-                Log.d(TAG, "Received new message of : ${nodeConversationOf.key}")
-
-                nodeConversationOf.children.forEach {
-                    val message  = it.getValue(FirebaseChatMessageModel::class.java)
-                    Log.d(TAG, message.toString())
+                lastMessageModel?.let {
+                    proceedLastMessage(it)
                 }
-
-
             }
 
             override fun onChildChanged(
-                nodeConversationOf: DataSnapshot,
+                nodeWith: DataSnapshot,
                 previousChildName: String?
             ) {
-                Log.d(TAG, "Received modified message of : ${nodeConversationOf.key}")
+                Log.d(LastMessagesViewModel.TAG, "onChildChanged : ${nodeWith.key}")
+                val lastMessageModel =
+                    nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
+                Log.d(LastMessagesViewModel.TAG, lastMessageModel.toString())
 
-                nodeConversationOf.children.forEach {
-                    val message  = it.getValue(FirebaseChatMessageModel::class.java)
-                    Log.d(TAG, message.toString())
+                lastMessageModel?.let {
+                    proceedLastMessage(it)
                 }
             }
 
@@ -89,6 +111,14 @@ class MessageService : Service() {
             }
 
         })
+
+    }
+
+    override fun onFirebaseInfoUserFinish() {
+        listenForMessages()
+    }
+
+    override fun onFirebaseInfoNoUser() {
 
     }
 }
