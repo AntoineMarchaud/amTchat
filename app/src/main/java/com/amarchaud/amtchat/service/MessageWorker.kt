@@ -18,7 +18,6 @@ import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.util.concurrent.CountDownLatch
 
 class MessageWorker(private val appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
@@ -35,8 +34,32 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
         return Result.success()
     }
 
-    private fun proceedLastMessage(lastMessageModel: FirebaseChatMessageModel) {
+    private fun updateReceiveStatus(message: FirebaseChatMessageModel) {
+
         val myUid: String = FirebaseAuth.getInstance().uid ?: return
+
+        val fromRef = FirebaseDatabase.getInstance().getReference(
+            FirebaseAddr.loadUserMessageForOnePerso(message.fromId, message.toId) + "/" + message.id
+        )
+
+        val toRef = FirebaseDatabase.getInstance().getReference(
+            FirebaseAddr.loadUserMessageForOnePerso(message.toId, message.fromId) + "/" + message.id
+        )
+
+        message.isReceived = true
+
+        fromRef.setValue(message)
+        toRef.setValue(message)
+    }
+
+    private fun proceedLastMessageReceived(lastMessageModel: FirebaseChatMessageModel) {
+        val myUid: String = FirebaseAuth.getInstance().uid ?: return
+
+        if (lastMessageModel.fromId == myUid)
+            return
+
+        if (lastMessageModel.fromId != myUid && lastMessageModel.isReceived)
+            return
 
         // get photo
         val idToLoad =
@@ -74,6 +97,8 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
                     with(NotificationManagerCompat.from(appContext)) {
                         // notificationId is a unique int for each notification that you must define
                         notify(0, builder.build())
+
+                        updateReceiveStatus(lastMessageModel)
                     }
 
 
@@ -141,7 +166,7 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
                 Log.d(LastMessagesViewModel.TAG, lastMessageModel.toString())
 
                 lastMessageModel?.let {
-                    proceedLastMessage(it)
+                    proceedLastMessageReceived(it)
                 }
             }
 
@@ -155,7 +180,7 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
                 Log.d(LastMessagesViewModel.TAG, lastMessageModel.toString())
 
                 lastMessageModel?.let {
-                    proceedLastMessage(it)
+                    proceedLastMessageReceived(it)
                 }
             }
 

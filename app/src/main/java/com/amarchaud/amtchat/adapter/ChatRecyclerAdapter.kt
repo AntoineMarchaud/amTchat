@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.databinding.ItemChatFromBinding
 import com.amarchaud.amtchat.databinding.ItemChatToBinding
+import com.amarchaud.amtchat.model.FirebaseChatMessageModel
+import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.viewmodel.ItemChatViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -18,7 +20,7 @@ class ChatRecyclerAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(
     ) {
 
-    var context : Context? = null
+    var context: Context? = null
     var elements: List<ItemChatViewModel> = mutableListOf()
 
     private val myUid = FirebaseAuth.getInstance().uid
@@ -71,8 +73,6 @@ class ChatRecyclerAdapter :
         // item est le ViewModel
         val item = elements[position]
 
-        //println("totototootototot : pos $position - $item")
-
         holder.itemView.setOnLongClickListener {
 
             when (holder.itemViewType) {
@@ -122,8 +122,14 @@ class ChatRecyclerAdapter :
                     }
                 }
             }
-
             true
+        }
+
+        if(holder.itemViewType == TYPE_TO) {
+            item.firebaseChatMessageModel?.let {
+                it.isRead = true
+                updateReadStatus(it)
+            }
         }
 
         when (holder.itemViewType) {
@@ -151,5 +157,22 @@ class ChatRecyclerAdapter :
         }
     }
 
+
+    private fun updateReadStatus(message: FirebaseChatMessageModel) {
+
+        val fromRef = FirebaseDatabase.getInstance().getReference(
+            FirebaseAddr.loadUserMessageForOnePerso(message.fromId, message.toId) + "/" + message.id
+        )
+
+        val toRef = FirebaseDatabase.getInstance().getReference(
+            FirebaseAddr.loadUserMessageForOnePerso(message.toId, message.fromId) + "/" + message.id
+        )
+
+        message.isRead = true
+
+        fromRef.setValue(message)
+        toRef.setValue(message)
+
+    }
 
 }

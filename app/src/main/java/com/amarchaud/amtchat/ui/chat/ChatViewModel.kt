@@ -13,6 +13,7 @@ import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
 import com.amarchaud.amtchat.viewmodel.ItemChatViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 class ChatViewModel(
@@ -70,8 +71,10 @@ class ChatViewModel(
                                 PersonalInformations.MySelf?.profileImageUrl
                             )
                         )
-                    else
+                    else {
+                        chatMessage.isReceived = true
                         listOfMessages.add(ItemChatViewModel(chatMessage, ChatUser.profileImageUrl))
+                    }
 
                     listOfMessagesLiveData.postValue(
                         Triple(
@@ -98,6 +101,9 @@ class ChatViewModel(
                     with(listOfMessages[pos]) {
                         firebaseChatMessageModel?.text = chatMessageModified?.text
                         firebaseChatMessageModel?.isDeleted = chatMessageModified?.isDeleted == true
+                        firebaseChatMessageModel?.isSent = chatMessageModified?.isSent == true
+                        firebaseChatMessageModel?.isReceived = chatMessageModified?.isReceived == true
+                        firebaseChatMessageModel?.isRead = chatMessageModified?.isRead == true
                     }
 
                     listOfMessagesLiveData.postValue(
@@ -145,10 +151,9 @@ class ChatViewModel(
         /**
          * Create duplicate
          */
-
         val fromRef = FirebaseDatabase.getInstance().getReference(
             FirebaseAddr.loadUserMessageForOnePerso(myUid, userUid)
-        ).push()
+        ).push() // push mean, create a new uid
 
         val toRef = FirebaseDatabase.getInstance().getReference(
             FirebaseAddr.loadUserMessageForOnePerso(userUid, myUid) + "/" + fromRef.key
@@ -162,14 +167,14 @@ class ChatViewModel(
                 myUid,
                 userUid,
                 System.currentTimeMillis() / 1000,
-                false
+                false,
+                isSent = true
             )
 
             // envoie du sens moi vers l'autre
             fromRef.setValue(f)
                 .addOnSuccessListener {
-                    Log.d(TAG, "Saved our chat message: ${fromRef.key}")
-
+                    // mis a jour du flag isSent
                     theMessage = null
                     notifyPropertyChanged(BR.theMessage)
                 }

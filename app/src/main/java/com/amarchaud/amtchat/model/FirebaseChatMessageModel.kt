@@ -11,5 +11,8 @@ data class FirebaseChatMessageModel(
     @ColumnInfo(name = "fromId") val fromId: String = "", // id de lenvoyeur
     @ColumnInfo(name = "toId") val toId: String = "", // id du receveur
     @ColumnInfo(name = "timestamp") val timestamp: Long = 0,
-    @ColumnInfo(name = "isDeleted") var isDeleted : Boolean = false
+    @ColumnInfo(name = "isDeleted") var isDeleted : Boolean = false,
+    var isSent : Boolean = false,
+    var isReceived : Boolean = false,
+    var isRead : Boolean = false
 )
