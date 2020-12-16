@@ -154,8 +154,15 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
                 }
             }
 
-            override fun onChildRemoved(nodeConversationOf: DataSnapshot) {
+            override fun onChildRemoved(nodeWith: DataSnapshot) {
+                Log.d(TAG, "onChildRemoved : ${nodeWith.key}")
+                val lastMessageModel =
+                    nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
+                Log.d(TAG, lastMessageModel.toString())
 
+                lastMessageModel?.let {
+                    proceedLastMessage(it)
+                }
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {

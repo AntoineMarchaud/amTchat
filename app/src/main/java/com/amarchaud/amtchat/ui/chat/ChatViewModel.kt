@@ -11,11 +11,9 @@ import com.amarchaud.amtchat.base.PersonalInformations
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
+import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
 import com.amarchaud.amtchat.viewmodel.ItemChatViewModel
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 
 class ChatViewModel(
     private val app: Application,
