@@ -29,6 +29,7 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
     }
 
     override fun doWork(): Result {
+        createNotificationChannel()
         listenForMessages()
         Thread.sleep(SLEEP_DURATION_MIN)
         return Result.success()

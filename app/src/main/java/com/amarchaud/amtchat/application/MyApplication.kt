@@ -19,10 +19,6 @@ class MyApplication : Application(), Configuration.Provider {
 
         FirebaseApp.initializeApp(this)
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-
-        val request = PeriodicWorkRequest.Builder(MessageWorker::class.java, MessageWorker.SLEEP_DURATION_MIN, TimeUnit.MINUTES)
-            .build()
-        WorkManager.getInstance(this).enqueue(request);
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
