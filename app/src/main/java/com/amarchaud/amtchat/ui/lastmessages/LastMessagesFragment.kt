@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amarchaud.amtchat.MainActivity
 import com.amarchaud.amtchat.R
@@ -36,7 +35,6 @@ class LastMessagesFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.show()
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        setHasOptionsMenu(true)
 
         binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
         return binding.root
