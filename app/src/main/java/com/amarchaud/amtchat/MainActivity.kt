@@ -3,16 +3,19 @@ package com.amarchaud.amtchat
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var navController: NavController
+    private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     companion object {
         const val TAG = "MainActivity"
@@ -22,56 +25,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setSupportActionBar(toolbar);
-
+        // nav host
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.my_first_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        NavigationUI.setupActionBarWithNavController(this, navController)
-    }
 
-    override fun onResume() {
-        super.onResume()
-    }
+        //appBarConfiguration = AppBarConfiguration(navController.graph)
+        // top Fragment (no arrow displayed, and display hamburger if there is a drawerlayout)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.splashFragment,
+                R.id.createAccountFragment,
+                R.id.lastMessagesFragment
+            )
+        )
 
-    override fun onPause() {
-        super.onPause()
-    }
+        // actionBar config
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-
-    fun getStackCount(): Int {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.my_first_host_fragment) as NavHostFragment
-        return navHostFragment.childFragmentManager.backStackEntryCount
-    }
-
-    fun getStackInfos() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.my_first_host_fragment) as NavHostFragment
-
-        val totalFragmentInStack = navHostFragment.childFragmentManager.backStackEntryCount
-        Log.d(TAG, "Nb Fragments in stack : $totalFragmentInStack")
-
-        for (index in 0 until totalFragmentInStack) {
-            with(navHostFragment.childFragmentManager.getBackStackEntryAt(index)) {
-                Log.d(TAG, "Stack Name : $name")
-                Log.d(TAG, "Stack Id : $id")
-            }
-        }
-
-        // Return a private FragmentManager for placing and managing Fragments inside of this Fragment.
-        val fragments = navHostFragment.childFragmentManager.fragments
-        fragments.forEach {
-            Log.d(TAG, "Current Fragment Name : ${it.javaClass.canonicalName}")
-        }
+        // Toolbar config
+        //NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        navController.navigateUp()
-        return super.onSupportNavigateUp()
+        val navController = findNavController(R.id.my_first_host_fragment)
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

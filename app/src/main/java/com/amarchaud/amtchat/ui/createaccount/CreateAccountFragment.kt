@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import com.amarchaud.amtchat.databinding.CreateAccountFragmentBinding
+import kotlinx.android.synthetic.main.activity_main.*
 
 class CreateAccountFragment : Fragment() {
 
@@ -30,8 +31,12 @@ class CreateAccountFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        // for actionbar
         (activity as AppCompatActivity).supportActionBar?.show()
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+        // for toolbar
+        //(activity as AppCompatActivity).toolbar?.
 
         binding = CreateAccountFragmentBinding.inflate(inflater, container, false)
         return binding.root

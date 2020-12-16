@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amarchaud.amtchat.MainActivity
 import com.amarchaud.amtchat.R
@@ -14,6 +17,7 @@ import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class LastMessagesFragment : Fragment() {
@@ -33,12 +37,21 @@ class LastMessagesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
 
+        // for actionBar only
         (activity as AppCompatActivity).supportActionBar?.show()
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         setHasOptionsMenu(true)
 
-        binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
+        // for toolbar only :
+        /*
+        (activity as AppCompatActivity).toolbar?.inflateMenu(R.menu.nav_menu)
+        (activity as AppCompatActivity).toolbar?.setOnMenuItemClickListener { item ->
+            item?.let {
+                proceedItemMenuClicked(item)
+            }
+            true
+        }*/
         return binding.root
     }
 
@@ -63,20 +76,41 @@ class LastMessagesFragment : Fragment() {
     }
 
 
+    /**
+     *  For ACTIONBAR ! (not toolbar)
+     */
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
         inflater.inflate(R.menu.nav_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        proceedItemMenuClicked(item)
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun proceedItemMenuClicked(item: MenuItem) {
+
+        // AndroidX Navigation
+        /*
+        if(item.itemId == R.id.createAccountFragment) {
+            FirebaseAuth.getInstance().signOut()
+        }
+
+        val navController = findNavController(requireView())
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+        */
+
         when (item.itemId) {
-            R.id.menu_new_message -> {
+            R.id.newMessageFragment -> {
                 val action =
                     LastMessagesFragmentDirections.actionLastMessagesFragmentToNewMessageFragment()
                 Navigation.findNavController(requireView()).navigate(action)
             }
-            R.id.menu_sign_out -> {
+            R.id.createAccountFragment -> {
                 FirebaseAuth.getInstance().signOut()
 
                 val action =
@@ -84,7 +118,6 @@ class LastMessagesFragment : Fragment() {
                 Navigation.findNavController(requireView()).navigate(action)
             }
         }
-        return super.onOptionsItemSelected(item)
     }
 
 }
