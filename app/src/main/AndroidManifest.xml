@@ -24,9 +24,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".service.MessageService">
-        </service>
     </application>
 
 </manifest>

@@ -1,68 +1,39 @@
 package com.amarchaud.amtchat.service
 
-import android.R.id
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.Service
-import android.app.job.JobScheduler
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
-import android.view.View
-import android.widget.ImageView
-import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.amarchaud.amtchat.R
-import com.amarchaud.amtchat.base.PersonalInformations
-import com.amarchaud.amtchat.base.PersonalInformationsListener
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BaseTarget
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.util.concurrent.CountDownLatch
 
-
-class MessageService : Service(), PersonalInformationsListener {
+class MessageWorker(private val appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
 
     companion object {
-        const val TAG = "MessageService"
+        const val TAG = "MessageWorker"
         const val CHANNEL_ID = "myChannelId"
+        const val SLEEP_DURATION_MIN = 15L
     }
 
-
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        return START_STICKY
+    override fun doWork(): Result {
+        listenForMessages()
+        Thread.sleep(SLEEP_DURATION_MIN)
+        return Result.success()
     }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null // dont want to have a relation Activity - Service
-    }
-
-    override fun onCreate() {
-        createNotificationChannel()
-        PersonalInformations.addListener(this)
-    }
-
-    override fun onDestroy() {
-        PersonalInformations.removeListener(this)
-    }
-
-
 
     private fun proceedLastMessage(lastMessageModel: FirebaseChatMessageModel) {
         val myUid: String = FirebaseAuth.getInstance().uid ?: return
@@ -73,23 +44,42 @@ class MessageService : Service(), PersonalInformationsListener {
         val refUser =
             FirebaseDatabase.getInstance().getReference("/users/$idToLoad")
         refUser.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(nodeUser: DataSnapshot) {
 
+            override fun onDataChange(nodeUser: DataSnapshot) {
                 val user = nodeUser.getValue(FirebaseUserModel::class.java)
                 user?.let { userTo: FirebaseUserModel ->
-                    // show a Pop-up to user !
 
+                    // can go directly to chat by pressing the notif
                     val b = Bundle()
                     b.putParcelable("ChatUser", userTo)
-                    val pendingIntent = NavDeepLinkBuilder(this@MessageService)
+                    val pendingIntent = NavDeepLinkBuilder(appContext)
                         .setGraph(R.navigation.nav_graph)
                         .setDestination(R.id.chatFragment)
                         .setArguments(b)
                         .createPendingIntent()
 
 
+                    val builder = NotificationCompat.Builder(
+                        appContext,
+                        CHANNEL_ID
+                    )
+                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                        .setContentTitle(userTo.username)
+                        .setContentText(lastMessageModel.text)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
 
-                    Glide.with(this@MessageService)
+                    // show a Pop-up to user !
+                    with(NotificationManagerCompat.from(appContext)) {
+                        // notificationId is a unique int for each notification that you must define
+                        notify(0, builder.build())
+                    }
+
+
+                    // do not know why : crash if i use glide
+/*
+                    Glide.with(appContext)
                         .asBitmap()
                         .load(Uri.parse(userTo.profileImageUrl))
                         .into(object : CustomTarget<Bitmap>() {
@@ -98,7 +88,10 @@ class MessageService : Service(), PersonalInformationsListener {
                                 resource: Bitmap,
                                 transition: Transition<in Bitmap>?
                             ) {
-                                val builder = NotificationCompat.Builder(this@MessageService, CHANNEL_ID)
+                                val builder = NotificationCompat.Builder(
+                                    appContext,
+                                    CHANNEL_ID
+                                )
                                     .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                                     .setLargeIcon(resource)
                                     .setContentTitle(userTo.username)
@@ -107,19 +100,20 @@ class MessageService : Service(), PersonalInformationsListener {
                                     .setContentIntent(pendingIntent)
                                     .setAutoCancel(true)
 
-                                with(NotificationManagerCompat.from(this@MessageService)) {
+                                with(NotificationManagerCompat.from(appContext)) {
                                     // notificationId is a unique int for each notification that you must define
                                     notify(0, builder.build())
+                                    latch.countDown()
                                 }
                             }
 
                             override fun onLoadCleared(placeholder: Drawable?) {
-
+                                latch.countDown()
                             }
 
                         })
 
-
+*/
                 }
             }
 
@@ -135,9 +129,7 @@ class MessageService : Service(), PersonalInformationsListener {
         val ref = FirebaseDatabase.getInstance().getReference(
             FirebaseAddr.loadAllMessagesOfUser(myUid)
         )
-        ref.addChildEventListener(object :
-            ChildEventListener {
-
+        ref.addChildEventListener(object : ChildEventListener {
 
             override fun onChildAdded(
                 nodeWith: DataSnapshot,
@@ -183,27 +175,19 @@ class MessageService : Service(), PersonalInformationsListener {
 
     }
 
-    override fun onFirebaseInfoUserFinish() {
-        listenForMessages()
-    }
-
-    override fun onFirebaseInfoNoUser() {
-
-    }
-
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
+            val name = appContext.getString(R.string.channel_name)
+            val descriptionText = appContext.getString(R.string.channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
             // Register the channel with the system
             val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }

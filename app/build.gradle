@@ -45,7 +45,7 @@ android {
 
 dependencies {
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+   // implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -101,6 +101,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version" // optional - Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-rxjava3:$room_version"
+
+    // WorkManager (fusion de  GcmNetworkManager / Job Scheduler....)
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 }
 
 apply plugin: "androidx.navigation.safeargs.kotlin"
