@@ -7,14 +7,26 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-interface PersonalInformationsListener{
+interface PersonalInformationsListener {
     fun onFirebaseInfoUserFinish()
     fun onFirebaseInfoNoUser()
 }
 
 object PersonalInformations {
 
-    var listener : PersonalInformationsListener? = null
+    private var listener: MutableList<PersonalInformationsListener> = mutableListOf()
+    fun addListener(oneListener: PersonalInformationsListener?) {
+        oneListener?.let {
+            listener.add(it)
+        }
+    }
+
+    fun removeListener(oneListener: PersonalInformationsListener?) {
+        oneListener?.let {
+            listener.remove(it)
+        }
+    }
+
 
     var MySelf: FirebaseUserModel? = null
         private set
@@ -22,7 +34,9 @@ object PersonalInformations {
     fun updateMyself() {
         val myUid: String? = FirebaseAuth.getInstance().uid
         if (myUid == null) {
-            listener?.onFirebaseInfoNoUser()
+            listener.forEach {
+                it.onFirebaseInfoNoUser()
+            }
             return
         }
 
@@ -31,7 +45,9 @@ object PersonalInformations {
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 MySelf = snapshot.getValue(FirebaseUserModel::class.java)
-                listener?.onFirebaseInfoUserFinish()
+                listener.forEach {
+                    it.onFirebaseInfoUserFinish()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

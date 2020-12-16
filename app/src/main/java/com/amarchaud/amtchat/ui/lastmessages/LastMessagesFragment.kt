@@ -58,9 +58,8 @@ class LastMessagesFragment : Fragment() {
 
         viewModel.listOfLastMessagesLiveData.observe(viewLifecycleOwner) { users: List<ItemLastMessageViewModel> ->
             lastMessagesRecyclerAdapter.submitList(users)
+            lastMessagesRecyclerAdapter.notifyDataSetChanged()
         }
-
-        (requireActivity() as MainActivity).getStackInfos()
     }
 
 

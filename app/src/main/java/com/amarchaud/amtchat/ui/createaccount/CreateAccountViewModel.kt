@@ -143,7 +143,7 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
             .addOnSuccessListener {
                 Log.d(TAG, "Finally we saved the user to Firebase Database")
 
-                PersonalInformations.listener = this
+                PersonalInformations.addListener(this)
                 PersonalInformations.updateMyself()
             }
             .addOnFailureListener {
@@ -173,6 +173,6 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
 
     override fun onCleared() {
         super.onCleared()
-        PersonalInformations.listener = null
+        PersonalInformations.removeListener(this)
     }
 }

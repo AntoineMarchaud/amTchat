@@ -5,5 +5,5 @@ import com.amarchaud.amtchat.model.FirebaseUserModel
 
 data class ItemLastMessageViewModel(
     val lastConvUser: FirebaseUserModel,
-    val lastConvChat: FirebaseChatMessageModel
+    var lastConvChat: FirebaseChatMessageModel
 )

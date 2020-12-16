@@ -16,7 +16,7 @@ class SplashViewModel(app: Application) : BaseViewModel(app), PersonalInformatio
     val actionLiveData: MutableLiveData<NavDirections> = MutableLiveData()
 
     init {
-        PersonalInformations.listener = this
+        PersonalInformations.addListener(this)
         PersonalInformations.updateMyself()
         //val user = FirebaseAuth.getInstance().currentUser
     }
@@ -41,6 +41,6 @@ class SplashViewModel(app: Application) : BaseViewModel(app), PersonalInformatio
 
     override fun onCleared() {
         super.onCleared()
-        PersonalInformations.listener = null
+        PersonalInformations.removeListener(this)
     }
 }

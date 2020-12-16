@@ -9,10 +9,7 @@ import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
 
@@ -22,7 +19,8 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
     }
 
     init {
-        fetchLastMessages()
+        //fetchLastMessages()
+        listenNewMessage()
     }
 
     var listOfLastMessagesLiveData: MutableLiveData<List<ItemLastMessageViewModel>> =
@@ -82,6 +80,89 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
             }
 
             override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+    }
+
+    private fun listenNewMessage() {
+        val myUid: String = FirebaseAuth.getInstance().uid ?: return
+
+        val listOfLastMessage: MutableList<ItemLastMessageViewModel> = mutableListOf()
+
+        fun proceedLastMessage(lastMessageModel: FirebaseChatMessageModel) {
+
+            // get photo
+            val idToLoad =
+                if (lastMessageModel.fromId == myUid) lastMessageModel.toId else lastMessageModel.fromId
+            val refUser =
+                FirebaseDatabase.getInstance().getReference("/users/$idToLoad")
+            refUser.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(nodeUser: DataSnapshot) {
+
+                    val user = nodeUser.getValue(FirebaseUserModel::class.java)
+                    user?.let { userTo: FirebaseUserModel ->
+
+                        val alreadyLastMessageFromThisUser = listOfLastMessage.find {
+                            it.lastConvUser == userTo
+                        }
+                        if(alreadyLastMessageFromThisUser == null) {
+                            listOfLastMessage.add(
+                                ItemLastMessageViewModel(
+                                    userTo,
+                                    lastMessageModel
+                                )
+                            )
+                        } else {
+                            alreadyLastMessageFromThisUser.lastConvChat = lastMessageModel
+                        }
+
+                        listOfLastMessagesLiveData.postValue(listOfLastMessage)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+        }
+
+        val ref =
+            FirebaseDatabase.getInstance().getReference(FirebaseAddr.loadAllMessagesOfUser(myUid))
+        ref.addChildEventListener(object :
+            ChildEventListener {
+            override fun onChildAdded(nodeWith: DataSnapshot, previousChildName: String?) {
+                Log.d(TAG, "onChildAdded : ${nodeWith.key}")
+                val lastMessageModel =
+                    nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
+                Log.d(TAG, lastMessageModel.toString())
+
+                lastMessageModel?.let {
+                    proceedLastMessage(it)
+                }
+            }
+
+            // onChildChanged will be call each time, because when userB send a message, Firebase considers the entire "nodeWith" node is changing
+            override fun onChildChanged(nodeWith: DataSnapshot, previousChildName: String?) {
+                Log.d(TAG, "onChildChanged : ${nodeWith.key}")
+                val lastMessageModel =
+                    nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
+                Log.d(TAG, lastMessageModel.toString())
+
+                lastMessageModel?.let {
+                    proceedLastMessage(it)
+                }
+            }
+
+            override fun onChildRemoved(nodeConversationOf: DataSnapshot) {
+
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
 
             }
         })

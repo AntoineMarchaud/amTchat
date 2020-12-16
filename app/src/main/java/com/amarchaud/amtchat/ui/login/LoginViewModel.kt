@@ -46,7 +46,7 @@ class LoginViewModel(private val app: Application) : BaseViewModel(app), Persona
 
                 Log.d(TAG, "Successfully logged in: ${it.result?.user?.uid}")
 
-                PersonalInformations.listener = this
+                PersonalInformations.addListener(this)
                 PersonalInformations.updateMyself()
             }
             .addOnFailureListener {
@@ -69,6 +69,6 @@ class LoginViewModel(private val app: Application) : BaseViewModel(app), Persona
 
     override fun onCleared() {
         super.onCleared()
-        PersonalInformations.listener = null
+        PersonalInformations.removeListener(this)
     }
 }
