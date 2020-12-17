@@ -39,6 +39,9 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
     var password: String? = null
 
     @Bindable
+    var passwordBis: String? = null
+
+    @Bindable
     var selectedPhotoUri: Uri? = null
 
     val pickPhotoAction = SingleLiveEvent<Boolean>()
@@ -49,10 +52,19 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
      */
     fun onRegister(v: View) {
 
-        if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
+        if (email.isNullOrEmpty() || password.isNullOrEmpty() || passwordBis.isNullOrEmpty()) {
             Toast.makeText(
                 app,
                 "Please enter text in email/password",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        if(password != passwordBis) {
+            Toast.makeText(
+                app,
+                "Please enter the same password",
                 Toast.LENGTH_SHORT
             ).show()
             return

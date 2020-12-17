@@ -79,6 +79,20 @@
             app:layout_constraintStart_toStartOf="@+id/email_edittext_register"
             app:layout_constraintTop_toBottomOf="@+id/email_edittext_register" />
 
+        <EditText
+            android:id="@+id/passwordbis_edittext_register"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:hint="@string/passwordBis"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@={CreateAccountViewModel.passwordBis}"
+            app:layout_constraintEnd_toEndOf="@+id/password_edittext_register"
+            app:layout_constraintStart_toStartOf="@+id/password_edittext_register"
+            app:layout_constraintTop_toBottomOf="@+id/password_edittext_register" />
         <Button
             android:id="@+id/register_button_register"
             android:layout_width="0dp"
@@ -88,9 +102,9 @@
             android:text="@string/register"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/password_edittext_register"
-            app:layout_constraintStart_toStartOf="@+id/password_edittext_register"
-            app:layout_constraintTop_toBottomOf="@+id/password_edittext_register" />
+            app:layout_constraintEnd_toEndOf="@+id/passwordbis_edittext_register"
+            app:layout_constraintStart_toStartOf="@+id/passwordbis_edittext_register"
+            app:layout_constraintTop_toBottomOf="@+id/passwordbis_edittext_register" />
 
         <TextView
             android:id="@+id/already_have_account_text_view"
@@ -102,7 +116,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:onClick="@{(v) -> CreateAccountViewModel.onAlreadyHaveAccount(v)}"
-            android:text="Already have an account?"
+            android:text="@string/alreadyHaveAccount"
             android:textColor="@android:color/black"
             android:textSize="16sp"
             android:textStyle="bold"
