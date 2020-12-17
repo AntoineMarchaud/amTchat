@@ -51,8 +51,6 @@ class MessageService : Service() {
     }
 
 
-
-
     private fun updateReceiveStatus(message: FirebaseChatMessageModel) {
 
         val myUid: String = FirebaseAuth.getInstance().uid ?: return
@@ -101,7 +99,6 @@ class MessageService : Service() {
                         .setDestination(R.id.chatFragment)
                         .setArguments(b)
                         .createPendingIntent()
-
 
 
                     val builder = NotificationCompat.Builder(
@@ -157,17 +154,25 @@ class MessageService : Service() {
                 previousChildName: String?
             ) {
                 Log.d(LastMessagesViewModel.TAG, "onChildChanged : ${nodeWith.key}")
-                val lastMessageModel =
-                    nodeWith.children.last().getValue(FirebaseChatMessageModel::class.java)
-                Log.d(LastMessagesViewModel.TAG, lastMessageModel.toString())
 
-                lastMessageModel?.let {
-                    proceedLastMessageReceived(it)
+                val messagesNotReceived = nodeWith.children.filter {
+                    (it?.getValue(FirebaseChatMessageModel::class.java) != null && it.getValue(
+                        FirebaseChatMessageModel::class.java
+                    )?.isReceived == false)
+                }
+
+                messagesNotReceived.forEach {
+                    val message = it.getValue(FirebaseChatMessageModel::class.java)
+
+                    message?.let {
+                        Log.d(TAG, it.toString())
+                        proceedLastMessageReceived(it)
+                    }
                 }
             }
 
             override fun onChildRemoved(nodeConversationOf: DataSnapshot) {
-                Log.d(MessageWorker.TAG, "Received removed message of : ${nodeConversationOf.key}")
+                Log.d(TAG, "Received removed message of : ${nodeConversationOf.key}")
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
