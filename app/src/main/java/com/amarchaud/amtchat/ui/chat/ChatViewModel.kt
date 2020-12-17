@@ -47,7 +47,7 @@ class ChatViewModel(
 
     private fun listenForMessages() {
 
-        val myUid = PersonalInformations.MySelf?.uid ?: return
+        val myUid = FirebaseAuth.getInstance().uid ?: return
         val userUid = ChatUser.uid
 
         val ref = FirebaseDatabase.getInstance().getReference(
@@ -145,7 +145,7 @@ class ChatViewModel(
 
     fun onSendMessage(v: View) {
 
-        val myUid = PersonalInformations.MySelf?.uid ?: return
+        val myUid = FirebaseAuth.getInstance().uid ?: return
         val userUid = ChatUser.uid
 
         /**

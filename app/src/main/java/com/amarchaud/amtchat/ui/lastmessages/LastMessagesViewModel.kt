@@ -1,21 +1,24 @@
 package com.amarchaud.amtchat.ui.lastmessages
 
+import android.app.ActivityManager
 import android.app.Application
+import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
+import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.MutableLiveData
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
-import com.amarchaud.amtchat.service.MessageWorker
+import com.amarchaud.amtchat.service.MessageService
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import java.util.concurrent.TimeUnit
 
-class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
+
+class LastMessagesViewModel(private val app: Application) : BaseViewModel(app) {
 
     companion object {
         var currentUser: FirebaseUserModel? = null
@@ -25,9 +28,16 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
     init {
         listenNewMessage()
 
+        // launch service
+        Intent(app, MessageService::class.java).also { intent ->
+            app.startService(intent)
+        }
+
+        /*
+        // Launch worker
         val request = PeriodicWorkRequest.Builder(MessageWorker::class.java, MessageWorker.SLEEP_DURATION_MIN, TimeUnit.MINUTES)
             .build()
-        WorkManager.getInstance(app).enqueue(request);
+        WorkManager.getInstance(app).enqueue(request);*/
     }
 
     var listOfLastMessagesLiveData: MutableLiveData<List<ItemLastMessageViewModel>> =
@@ -54,7 +64,7 @@ class LastMessagesViewModel(app: Application) : BaseViewModel(app) {
                         val alreadyLastMessageFromThisUser = listOfLastMessage.find {
                             it.lastConvUser == userTo
                         }
-                        if(alreadyLastMessageFromThisUser == null) {
+                        if (alreadyLastMessageFromThisUser == null) {
                             listOfLastMessage.add(
                                 ItemLastMessageViewModel(
                                     userTo,

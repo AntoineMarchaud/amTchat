@@ -1,5 +1,6 @@
 package com.amarchaud.amtchat.ui.lastmessages
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -15,6 +16,7 @@ import com.amarchaud.amtchat.MainActivity
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
+import com.amarchaud.amtchat.service.MessageService
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
@@ -110,14 +112,19 @@ class LastMessagesFragment : Fragment() {
             R.id.newMessageFragment -> {
                 val action =
                     LastMessagesFragmentDirections.actionLastMessagesFragmentToNewMessageFragment()
-                Navigation.findNavController(requireView()).navigate(action)
+                findNavController(requireView()).navigate(action)
             }
             R.id.createAccountFragment -> {
                 FirebaseAuth.getInstance().signOut()
 
+                // stop service
+                Intent(this@LastMessagesFragment.context, MessageService::class.java).also { intent ->
+                    this@LastMessagesFragment.context?.stopService(intent)
+                }
+
                 val action =
                     LastMessagesFragmentDirections.actionLastMessagesFragmentToCreateAccountFragment()
-                Navigation.findNavController(requireView()).navigate(action)
+                findNavController(requireView()).navigate(action)
             }
         }
     }

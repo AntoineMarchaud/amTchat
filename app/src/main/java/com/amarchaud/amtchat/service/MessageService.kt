@@ -2,15 +2,16 @@ package com.amarchaud.amtchat.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
-import androidx.work.Worker
-import androidx.work.WorkerParameters
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
@@ -19,21 +20,38 @@ import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class MessageWorker(private val appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams) {
+class MessageService : Service() {
 
     companion object {
-        const val TAG = "MessageWorker"
-        const val CHANNEL_ID = "myChannelId"
-        const val SLEEP_DURATION_MIN = 15L
+        const val TAG = "MessageService"
+        const val CHANNEL_ID = "channelIdService"
     }
 
-    override fun doWork(): Result {
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "onCreate")
         createNotificationChannel()
         listenForMessages()
-        Thread.sleep(SLEEP_DURATION_MIN)
-        return Result.success()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand")
+        // If we get killed, after returning from here, restart
+        return START_STICKY
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        // We don't provide binding, so return null
+        return null
+    }
+
+
+
 
     private fun updateReceiveStatus(message: FirebaseChatMessageModel) {
 
@@ -73,18 +91,21 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
                 val user = nodeUser.getValue(FirebaseUserModel::class.java)
                 user?.let { userTo: FirebaseUserModel ->
 
+                    Log.d(TAG, "onDestroy")
+
                     // can go directly to chat by pressing the notif
                     val b = Bundle()
                     b.putParcelable("ChatUser", userTo)
-                    val pendingIntent = NavDeepLinkBuilder(appContext)
+                    val pendingIntent = NavDeepLinkBuilder(this@MessageService)
                         .setGraph(R.navigation.nav_graph)
                         .setDestination(R.id.chatFragment)
                         .setArguments(b)
                         .createPendingIntent()
 
 
+
                     val builder = NotificationCompat.Builder(
-                        appContext,
+                        this@MessageService,
                         CHANNEL_ID
                     )
                         .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
@@ -95,51 +116,11 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
                         .setAutoCancel(true)
 
                     // show a Pop-up to user !
-                    with(NotificationManagerCompat.from(appContext)) {
+                    with(NotificationManagerCompat.from(this@MessageService)) {
                         // notificationId is a unique int for each notification that you must define
                         notify(0, builder.build())
-
                         updateReceiveStatus(lastMessageModel)
                     }
-
-
-                    // do not know why : crash if i use glide
-/*
-                    Glide.with(appContext)
-                        .asBitmap()
-                        .load(Uri.parse(userTo.profileImageUrl))
-                        .into(object : CustomTarget<Bitmap>() {
-
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: Transition<in Bitmap>?
-                            ) {
-                                val builder = NotificationCompat.Builder(
-                                    appContext,
-                                    CHANNEL_ID
-                                )
-                                    .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                                    .setLargeIcon(resource)
-                                    .setContentTitle(userTo.username)
-                                    .setContentText(lastMessageModel.text)
-                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                                    .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true)
-
-                                with(NotificationManagerCompat.from(appContext)) {
-                                    // notificationId is a unique int for each notification that you must define
-                                    notify(0, builder.build())
-                                    latch.countDown()
-                                }
-                            }
-
-                            override fun onLoadCleared(placeholder: Drawable?) {
-                                latch.countDown()
-                            }
-
-                        })
-
-*/
                 }
             }
 
@@ -186,7 +167,7 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
             }
 
             override fun onChildRemoved(nodeConversationOf: DataSnapshot) {
-                Log.d(TAG, "Received removed message of : ${nodeConversationOf.key}")
+                Log.d(MessageWorker.TAG, "Received removed message of : ${nodeConversationOf.key}")
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -205,14 +186,14 @@ class MessageWorker(private val appContext: Context, workerParams: WorkerParamet
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = appContext.getString(R.string.channel_description_worker)
+            val name = getString(R.string.channel_name_service)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = appContext.getString(R.string.channel_description_worker)
+                description = getString(R.string.channel_description_service)
             }
             // Register the channel with the system
             val notificationManager: NotificationManager =
-                appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
