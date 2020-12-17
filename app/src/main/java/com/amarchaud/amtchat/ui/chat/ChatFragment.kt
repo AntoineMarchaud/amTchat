@@ -76,4 +76,14 @@ class ChatFragment : Fragment() {
         })
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.onStop()
+    }
 }

@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity() {
         viewModel =
             ViewModelProvider(this).get(MainViewModel::class.java)
         binding =
-            DataBindingUtil.setContentView(this, R.layout.activity_main)*/
+            DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.mainViewModel = viewModel
+        binding.lifecycleOwner = this*/
 
 
         // nav host

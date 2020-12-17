@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -27,6 +28,32 @@ class MessageService : Service() {
         const val CHANNEL_ID = "channelIdService"
     }
 
+    // given by client
+    var currentUidConversationTo : String? = null
+
+    /**
+     * Manage Binding with Client
+     */
+    // Binder given to clients
+    private val binder = LocalBinder()
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    inner class LocalBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods
+        fun getService(): MessageService = this@MessageService
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        return binder
+    }
+    // End
+
+
+    /**
+     * Manage Service itself
+     */
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate")
@@ -44,12 +71,6 @@ class MessageService : Service() {
         // If we get killed, after returning from here, restart
         return START_STICKY
     }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        // We don't provide binding, so return null
-        return null
-    }
-
 
     private fun updateReceiveStatus(message: FirebaseChatMessageModel) {
 
@@ -89,33 +110,35 @@ class MessageService : Service() {
                 val user = nodeUser.getValue(FirebaseUserModel::class.java)
                 user?.let { userTo: FirebaseUserModel ->
 
-                    Log.d(TAG, "onDestroy")
+                    if(currentUidConversationTo != userTo.uid) {
+                        // can go directly to chat by pressing the notif
+                        val b = Bundle()
+                        b.putParcelable("ChatUser", userTo)
+                        val pendingIntent = NavDeepLinkBuilder(this@MessageService)
+                            .setGraph(R.navigation.nav_graph)
+                            .setDestination(R.id.lastMessagesFragment)
+                            .setArguments(b)
+                            .createPendingIntent()
 
-                    // can go directly to chat by pressing the notif
-                    val b = Bundle()
-                    b.putParcelable("ChatUser", userTo)
-                    val pendingIntent = NavDeepLinkBuilder(this@MessageService)
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.chatFragment)
-                        .setArguments(b)
-                        .createPendingIntent()
 
+                        val builder = NotificationCompat.Builder(
+                            this@MessageService,
+                            CHANNEL_ID
+                        )
+                            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                            .setContentTitle(userTo.username)
+                            .setContentText(lastMessageModel.text)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true)
 
-                    val builder = NotificationCompat.Builder(
-                        this@MessageService,
-                        CHANNEL_ID
-                    )
-                        .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                        .setContentTitle(userTo.username)
-                        .setContentText(lastMessageModel.text)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true)
-
-                    // show a Pop-up to user !
-                    with(NotificationManagerCompat.from(this@MessageService)) {
-                        // notificationId is a unique int for each notification that you must define
-                        notify(0, builder.build())
+                        // show a Pop-up to user !
+                        with(NotificationManagerCompat.from(this@MessageService)) {
+                            // notificationId is a unique int for each notification that you must define
+                            notify(0, builder.build())
+                            updateReceiveStatus(lastMessageModel)
+                        }
+                    } else {
                         updateReceiveStatus(lastMessageModel)
                     }
                 }

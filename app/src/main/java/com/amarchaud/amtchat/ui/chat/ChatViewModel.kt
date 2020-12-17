@@ -1,6 +1,11 @@
 package com.amarchaud.amtchat.ui.chat
 
 import android.app.Application
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.databinding.Bindable
@@ -11,7 +16,7 @@ import com.amarchaud.amtchat.base.PersonalInformations
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
-import com.amarchaud.amtchat.ui.lastmessages.LastMessagesViewModel
+import com.amarchaud.amtchat.service.MessageService
 import com.amarchaud.amtchat.viewmodel.ItemChatViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -102,7 +107,8 @@ class ChatViewModel(
                         firebaseChatMessageModel?.text = chatMessageModified?.text
                         firebaseChatMessageModel?.isDeleted = chatMessageModified?.isDeleted == true
                         firebaseChatMessageModel?.isSent = chatMessageModified?.isSent == true
-                        firebaseChatMessageModel?.isReceived = chatMessageModified?.isReceived == true
+                        firebaseChatMessageModel?.isReceived =
+                            chatMessageModified?.isReceived == true
                         firebaseChatMessageModel?.isRead = chatMessageModified?.isRead == true
                     }
 
@@ -183,4 +189,48 @@ class ChatViewModel(
             toRef.setValue(f)
         }
     }
+
+    /**
+     * Manage service
+     */
+
+    private var mService: MessageService? = null
+    private var bound: Boolean = false
+
+    val mConnection = object : ServiceConnection {
+        // Called when the connection with the service is established
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            val binder = service as MessageService.LocalBinder
+            mService = binder.getService()
+            bound = true
+
+            // informe service
+            mService?.currentUidConversationTo = ChatUser.uid
+        }
+
+        // Called when the connection with the service disconnects unexpectedly
+        override fun onServiceDisconnected(className: ComponentName) {
+            Log.e(TAG, "onServiceDisconnected")
+            bound = false
+
+            mService?.currentUidConversationTo = null
+        }
+    }
+
+    fun onStart() {
+        // Bind to the service
+        Intent(app, MessageService::class.java).also { intent ->
+            app.bindService(intent, mConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+
+    fun onStop() {
+        if (bound) {
+            app.unbindService(mConnection)
+            mService?.currentUidConversationTo = null
+            bound = false
+        }
+    }
+
 }
