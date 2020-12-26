@@ -12,4 +12,6 @@ A simple tchat application.
 - Glide
 - Bindingadapter
 - Notification 
-- Worker
+- Android Service
+- Worker (not used)
+- Room (not used)
