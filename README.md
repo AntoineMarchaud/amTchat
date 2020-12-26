@@ -1,4 +1,4 @@
-# amTchat (made by Antoine Marchaud)
+# amTchat
 
 A simple tchat application.
 
