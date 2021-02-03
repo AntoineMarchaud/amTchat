@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import com.amarchaud.amtchat.databinding.CreateAccountFragmentBinding
-import kotlinx.android.synthetic.main.activity_main.*
 
 class CreateAccountFragment : Fragment() {
 

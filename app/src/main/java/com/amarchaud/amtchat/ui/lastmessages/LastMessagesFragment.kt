@@ -2,24 +2,19 @@ package com.amarchaud.amtchat.ui.lastmessages
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.amarchaud.amtchat.MainActivity
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
 import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
 import com.amarchaud.amtchat.service.MessageService
 import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class LastMessagesFragment : Fragment() {

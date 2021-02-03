@@ -2,6 +2,9 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.gms.google-services'
+    id 'kotlin-parcelize'
 }
 
 
@@ -9,11 +12,8 @@ android {
     compileSdkVersion 30
 
 
-    dataBinding {
-        enabled = true
-    }
-
     buildFeatures {
+        dataBinding true
         viewBinding true
     }
 
@@ -104,7 +104,3 @@ dependencies {
     // WorkManager (fusion de  GcmNetworkManager / Job Scheduler....)
     implementation "androidx.work:work-runtime-ktx:$work_version"
 }
-
-apply plugin: "androidx.navigation.safeargs.kotlin"
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-android-extensions'
