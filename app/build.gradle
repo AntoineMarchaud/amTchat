@@ -6,8 +6,7 @@ plugins {
 
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
 
 
     dataBinding {
@@ -21,7 +20,7 @@ android {
     defaultConfig {
         applicationId "com.amarchaud.amtchat"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -57,7 +56,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
 
     //rxjava
     implementation "io.reactivex.rxjava3:rxjava:$rx_java"
@@ -81,15 +80,15 @@ dependencies {
     // Feature module Support
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
     // Jetpack Compose Integration
-    implementation "androidx.navigation:navigation-compose:1.0.0-alpha03"
+    implementation "androidx.navigation:navigation-compose:1.0.0-alpha06"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:26.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-core:18.0.0'
-    implementation 'com.google.firebase:firebase-auth:20.0.1' // login
-    implementation 'com.google.firebase:firebase-storage:19.2.0' // images
-    implementation 'com.google.firebase:firebase-database:19.5.1' // messages
+    implementation 'com.google.firebase:firebase-core:18.0.2'
+    implementation 'com.google.firebase:firebase-auth:20.0.2' // login
+    implementation 'com.google.firebase:firebase-storage:19.2.1' // images
+    implementation 'com.google.firebase:firebase-database:19.6.0' // messages
 
     // Dagger 2 : must be replaced by hilt !
     implementation "com.google.dagger:dagger:$dagger2_version"
