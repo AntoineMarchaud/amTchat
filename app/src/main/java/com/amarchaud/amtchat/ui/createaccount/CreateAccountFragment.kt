@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.amarchaud.amtchat.databinding.CreateAccountFragmentBinding
 
@@ -23,7 +24,7 @@ class CreateAccountFragment : Fragment() {
     }
 
     private lateinit var binding: CreateAccountFragmentBinding
-    private lateinit var viewModel: CreateAccountViewModel
+    private val viewModel: CreateAccountViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +39,6 @@ class CreateAccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(CreateAccountViewModel::class.java)
         binding.createAccountViewModel = viewModel
 
         viewModel.actionToNextScreen.observe(viewLifecycleOwner, {

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,12 @@ class ChatFragment : Fragment() {
     private var chatRecyclerAdapter: ChatRecyclerAdapter = ChatRecyclerAdapter()
 
     private lateinit var binding: ChatFragmentBinding
-    private lateinit var viewModel: ChatViewModel
+    private val viewModel: ChatViewModel by viewModels {
+        ViewModelFactory(
+            activity?.application!!,
+            args.ChatUser
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,10 +51,6 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(activity?.application!!, args.ChatUser)
-        ).get(ChatViewModel::class.java)
         binding.chatViewModel = viewModel
 
         binding.recyclerviewChatLog.layoutManager =

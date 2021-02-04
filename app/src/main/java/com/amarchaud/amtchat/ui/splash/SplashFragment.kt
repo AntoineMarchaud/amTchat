@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.amarchaud.amtchat.databinding.SplashFragmentBinding
 
@@ -17,7 +18,7 @@ class SplashFragment : Fragment() {
     }
 
     private lateinit var binding: SplashFragmentBinding
-    private lateinit var viewModel: SplashViewModel
+    private val viewModel: SplashViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,9 +34,6 @@ class SplashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(this).get(SplashViewModel::class.java)
-
 
         viewModel.actionLiveData.observe(viewLifecycleOwner, {
             Navigation.findNavController(view).navigate(it)

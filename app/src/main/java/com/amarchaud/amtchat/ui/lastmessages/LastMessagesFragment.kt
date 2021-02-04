@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
@@ -24,7 +25,7 @@ class LastMessagesFragment : Fragment() {
     }
 
     private lateinit var binding: LastMessagesFragmentBinding
-    private lateinit var viewModel: LastMessagesViewModel
+    private val viewModel: LastMessagesViewModel by viewModels()
 
     // recycler view
     private var lastMessagesRecyclerAdapter: LastMessagesRecyclerAdapter =
@@ -54,7 +55,6 @@ class LastMessagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(LastMessagesViewModel::class.java)
 
         binding.lastMessagesRecyclerView.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
