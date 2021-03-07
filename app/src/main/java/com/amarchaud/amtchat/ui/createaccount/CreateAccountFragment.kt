@@ -1,29 +1,24 @@
 package com.amarchaud.amtchat.ui.createaccount
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
-import com.amarchaud.amtchat.databinding.CreateAccountFragmentBinding
+import com.amarchaud.amtchat.databinding.FragmentCreateAccountBinding
 
 class CreateAccountFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = CreateAccountFragment()
-    }
 
     // Returned when user has selected a photo
     private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) {
         viewModel.onSelectedPhoto(it)
     }
 
-    private lateinit var binding: CreateAccountFragmentBinding
+    private lateinit var binding: FragmentCreateAccountBinding
     private val viewModel: CreateAccountViewModel by viewModels()
 
     override fun onCreateView(
@@ -33,7 +28,7 @@ class CreateAccountFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.show()
 
-        binding = CreateAccountFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentCreateAccountBinding.inflate(inflater, container, false)
         return binding.root
     }
 

@@ -4,31 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amarchaud.amtchat.adapter.ChooseUserRecyclerAdapter
-import com.amarchaud.amtchat.databinding.ChooseUserFragmentBinding
+import com.amarchaud.amtchat.databinding.FragmentChooseUserBinding
 import com.amarchaud.amtchat.model.FirebaseUserModel
 
 class ChooseUserFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ChooseUserFragment()
-    }
-
     // recycler view
     private var chooseUserRecyclerAdapter: ChooseUserRecyclerAdapter = ChooseUserRecyclerAdapter()
 
-    private lateinit var binding: ChooseUserFragmentBinding
+    private lateinit var binding: FragmentChooseUserBinding
     private lateinit var viewModel: ChooseUserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ChooseUserFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentChooseUserBinding.inflate(inflater, container, false)
         return binding.root
     }
 

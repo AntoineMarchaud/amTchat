@@ -6,13 +6,18 @@ import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.databinding.Bindable
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDirections
-import com.amarchaud.amtchat.BR
-import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.base.PersonalInformations
 import com.amarchaud.amtchat.base.PersonalInformationsListener
 import com.amarchaud.amtchat.base.SingleLiveEvent
+import com.amarchaud.amtchat.injection.component.DaggerViewModelInjectorComponent
+import com.amarchaud.amtchat.injection.component.ViewModelInjectorComponent
+import com.amarchaud.amtchat.injection.module.AppModule
+import com.amarchaud.amtchat.injection.module.ContentResolverModule
+import com.amarchaud.amtchat.injection.module.DaoModule
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +25,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import javax.inject.Inject
 
-class CreateAccountViewModel(private val app: Application) : BaseViewModel(app), PersonalInformationsListener {
+class CreateAccountViewModel(private val app: Application) : AndroidViewModel(app), PersonalInformationsListener {
 
     companion object {
         const val TAG: String = "CreateAccount"
@@ -29,30 +34,43 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
     @Inject
     lateinit var injectedContentResolver: ContentResolver
 
-    @Bindable
-    var username: String? = null
+    // two ways binding
+    val username = MutableLiveData<String?>()
+    val email = MutableLiveData<String?>()
+    val password = MutableLiveData<String?>()
+    val passwordBis = MutableLiveData<String?>()
 
-    @Bindable
-    var email: String? = null
 
-    @Bindable
-    var password: String? = null
+    private val _selectedPhotoUri = SingleLiveEvent<Uri?>()
+    val selectedPhotoUri: LiveData<Uri?>
+        get() = _selectedPhotoUri
 
-    @Bindable
-    var passwordBis: String? = null
+    private val _pickPhotoAction = SingleLiveEvent<Boolean>()
+    val pickPhotoAction: LiveData<Boolean>
+        get() = _pickPhotoAction
 
-    @Bindable
-    var selectedPhotoUri: Uri? = null
 
-    val pickPhotoAction = SingleLiveEvent<Boolean>()
-    val actionToNextScreen = SingleLiveEvent<NavDirections>()
+    private val _actionToNextScreen = SingleLiveEvent<NavDirections>()
+    val actionToNextScreen: LiveData<NavDirections>
+        get() = _actionToNextScreen
+
+
+    private val component: ViewModelInjectorComponent = DaggerViewModelInjectorComponent
+        .builder()
+        .appModule(AppModule(app))
+        .contentResolverModule(ContentResolverModule(app))
+        .daoModule(DaoModule(app))
+        .build()
+    init {
+        component.inject(this)
+    }
 
     /**
      *  CALLBACK FROM VIEW
      */
     fun onRegister(v: View) {
 
-        if (email.isNullOrEmpty() || password.isNullOrEmpty() || passwordBis.isNullOrEmpty()) {
+        if (email.value.isNullOrEmpty() || password.value.isNullOrEmpty() || passwordBis.value.isNullOrEmpty()) {
             Toast.makeText(
                 app,
                 "Please enter text in email/password",
@@ -73,7 +91,7 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
         Log.d(TAG, "Attempting to create user with email: $email")
 
         // Firebase Authentication to create a user with email and password
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email!!, password!!)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.value!!, password.value!!)
             .addOnCompleteListener {
                 if (!it.isSuccessful)
                     return@addOnCompleteListener
@@ -100,17 +118,16 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
 
         val action: NavDirections =
             CreateAccountFragmentDirections.actionCreateAccountFragmentToLoginFragment()
-        actionToNextScreen.postValue(action)
+        _actionToNextScreen.postValue(action)
     }
 
     fun onSelectPhoto() {
         Log.d(TAG, "Try to show photo selector")
-        pickPhotoAction.postValue(true)
+        _pickPhotoAction.postValue(true)
     }
 
     fun onSelectedPhoto(uri: Uri?) {
-        selectedPhotoUri = uri
-        notifyPropertyChanged(BR.selectedPhotoUri)
+        _selectedPhotoUri.value = uri
     }
 
 
@@ -120,13 +137,13 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
      */
     private fun uploadImageToFirebaseStorage() {
 
-        if (selectedPhotoUri == null)
+        if (selectedPhotoUri.value == null)
             return
 
         // create a random UID for the image
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
-        ref.putFile(selectedPhotoUri!!)
+        ref.putFile(selectedPhotoUri.value!!)
             .addOnSuccessListener { it ->
 
                 Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")
@@ -148,7 +165,7 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
 
         val uid = FirebaseAuth.getInstance().uid ?: return
 
-        val user = FirebaseUserModel(uid, username, profileImageUrl)
+        val user = FirebaseUserModel(uid, username.value!!, profileImageUrl)
 
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         ref.setValue(user)
@@ -172,7 +189,7 @@ class CreateAccountViewModel(private val app: Application) : BaseViewModel(app),
     override fun onFirebaseInfoUserFinish() {
         val action: NavDirections =
             CreateAccountFragmentDirections.actionCreateAccountFragmentToLastMessagesFragment()
-        actionToNextScreen.postValue(action)
+        _actionToNextScreen.postValue(action)
     }
 
     override fun onFirebaseInfoNoUser() {

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/last_messages_fragment">
+    tools:showIn="@layout/fragment_last_messages">
 
     <item android:id="@+id/newMessageFragment"
         android:title="@string/newMessage"/>

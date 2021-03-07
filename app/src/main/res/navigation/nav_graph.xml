@@ -8,7 +8,7 @@
         android:id="@+id/splashFragment"
         android:name="com.amarchaud.amtchat.ui.splash.SplashFragment"
         android:label="Splash"
-        tools:layout="@layout/splash_fragment">
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/action_splashFragment_to_lastMessagesFragment"
             app:destination="@id/lastMessagesFragment"
@@ -24,7 +24,7 @@
         android:id="@+id/loginFragment"
         android:name="com.amarchaud.amtchat.ui.login.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/login_fragment">
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_lastMessagesFragment"
             app:destination="@id/lastMessagesFragment"
@@ -35,7 +35,7 @@
         android:id="@+id/lastMessagesFragment"
         android:name="com.amarchaud.amtchat.ui.lastmessages.LastMessagesFragment"
         android:label="Last messages"
-        tools:layout="@layout/last_messages_fragment">
+        tools:layout="@layout/fragment_last_messages">
         <action
             android:id="@+id/action_lastMessagesFragment_to_newMessageFragment"
             app:destination="@id/newMessageFragment" />
@@ -52,7 +52,7 @@
         android:id="@+id/createAccountFragment"
         android:name="com.amarchaud.amtchat.ui.createaccount.CreateAccountFragment"
         android:label="Create account"
-        tools:layout="@layout/create_account_fragment">
+        tools:layout="@layout/fragment_create_account">
         <action
             android:id="@+id/action_createAccountFragment_to_lastMessagesFragment"
             app:destination="@id/lastMessagesFragment"
@@ -66,7 +66,7 @@
         android:id="@+id/newMessageFragment"
         android:name="com.amarchaud.amtchat.ui.chooseuser.ChooseUserFragment"
         android:label="Choose User"
-        tools:layout="@layout/choose_user_fragment">
+        tools:layout="@layout/fragment_choose_user">
         <action
             android:id="@+id/action_newMessageFragment_to_chatFragment"
             app:destination="@id/chatFragment"
@@ -74,8 +74,8 @@
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.amarchaud.amtchat.ui.chat.ChatFragment"
-        tools:layout="@layout/chat_fragment" >
+        android:name="com.amarchaud.amtchat.ui.tchat.TchatFragment"
+        tools:layout="@layout/fragment_tchat" >
         <argument
             android:name="ChatUser"
             app:argType="com.amarchaud.amtchat.model.FirebaseUserModel" />

@@ -10,9 +10,8 @@ import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.databinding.ItemChatFromBinding
 import com.amarchaud.amtchat.databinding.ItemChatToBinding
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
-import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
-import com.amarchaud.amtchat.viewmodel.ItemChatViewModel
+import com.amarchaud.amtchat.model.app.ItemChatViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 

@@ -1,4 +1,4 @@
-package com.amarchaud.amtchat.ui.chat
+package com.amarchaud.amtchat.ui.tchat
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,28 +7,27 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amarchaud.amtchat.adapter.ChatRecyclerAdapter
-import com.amarchaud.amtchat.databinding.ChatFragmentBinding
+import com.amarchaud.amtchat.databinding.FragmentTchatBinding
 import com.amarchaud.amtchat.injection.ViewModelFactory
 
-class ChatFragment : Fragment() {
+class TchatFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ChatFragment()
+        fun newInstance() = TchatFragment()
         const val TAG = "ChatFragment"
     }
 
     // arguments passés avec Navigation Component
-    val args: ChatFragmentArgs by navArgs()
+    val args: TchatFragmentArgs by navArgs()
 
     // recycler view
     private var chatRecyclerAdapter: ChatRecyclerAdapter = ChatRecyclerAdapter()
 
-    private lateinit var binding: ChatFragmentBinding
-    private val viewModel: ChatViewModel by viewModels {
+    private lateinit var binding: FragmentTchatBinding
+    private val viewModel: TchatViewModel by viewModels {
         ViewModelFactory(
             activity?.application!!,
             args.ChatUser
@@ -44,7 +43,7 @@ class ChatFragment : Fragment() {
 
         chatRecyclerAdapter.context = this.context
 
-        binding = ChatFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentTchatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -64,14 +63,14 @@ class ChatFragment : Fragment() {
             chatRecyclerAdapter.elements = it.first
 
             when (it.second) {
-                ChatViewModel.Companion.typeItem.ITEM_INSERTED -> {
+                TchatViewModel.Companion.typeItem.ITEM_INSERTED -> {
                     chatRecyclerAdapter.notifyItemInserted(it.third)
                     binding.recyclerviewChatLog.scrollToPosition(it.third)
                 }
-                ChatViewModel.Companion.typeItem.ITEM_MODIFIED -> chatRecyclerAdapter.notifyItemChanged(
+                TchatViewModel.Companion.typeItem.ITEM_MODIFIED -> chatRecyclerAdapter.notifyItemChanged(
                     it.third
                 )
-                ChatViewModel.Companion.typeItem.ITEM_DELETED -> chatRecyclerAdapter.notifyItemRemoved(
+                TchatViewModel.Companion.typeItem.ITEM_DELETED -> chatRecyclerAdapter.notifyItemRemoved(
                     it.third
                 )
             }

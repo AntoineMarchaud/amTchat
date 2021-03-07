@@ -6,25 +6,20 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.adapter.LastMessagesRecyclerAdapter
-import com.amarchaud.amtchat.databinding.LastMessagesFragmentBinding
+import com.amarchaud.amtchat.databinding.FragmentLastMessagesBinding
 import com.amarchaud.amtchat.service.MessageService
-import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
+import com.amarchaud.amtchat.model.app.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
 class LastMessagesFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = LastMessagesFragment()
-    }
-
-    private lateinit var binding: LastMessagesFragmentBinding
+    private lateinit var binding: FragmentLastMessagesBinding
     private val viewModel: LastMessagesViewModel by viewModels()
 
     // recycler view
@@ -35,21 +30,11 @@ class LastMessagesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = LastMessagesFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentLastMessagesBinding.inflate(inflater, container, false)
 
         // for actionBar only
         (activity as AppCompatActivity).supportActionBar?.show()
         setHasOptionsMenu(true)
-
-        // for toolbar only :
-        /*
-        (activity as AppCompatActivity).toolbar?.inflateMenu(R.menu.nav_menu)
-        (activity as AppCompatActivity).toolbar?.setOnMenuItemClickListener { item ->
-            item?.let {
-                proceedItemMenuClicked(item)
-            }
-            true
-        }*/
         return binding.root
     }
 

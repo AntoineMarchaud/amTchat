@@ -1,24 +1,20 @@
 package com.amarchaud.amtchat.ui.lastmessages
 
-import android.app.ActivityManager
 import android.app.Application
-import android.content.Context
-import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.service.MessageService
-import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
+import com.amarchaud.amtchat.model.app.ItemLastMessageViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 
-class LastMessagesViewModel(private val app: Application) : BaseViewModel(app) {
+class LastMessagesViewModel(private val app: Application) : AndroidViewModel(app) {
 
     companion object {
         var currentUser: FirebaseUserModel? = null

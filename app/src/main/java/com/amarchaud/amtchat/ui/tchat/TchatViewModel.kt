@@ -1,4 +1,4 @@
-package com.amarchaud.amtchat.ui.chat
+package com.amarchaud.amtchat.ui.tchat
 
 import android.app.Application
 import android.content.ComponentName
@@ -8,24 +8,22 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
 import android.view.View
-import androidx.databinding.Bindable
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.amarchaud.amtchat.BR
-import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.base.PersonalInformations
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.amarchaud.amtchat.network.FirebaseAddr
 import com.amarchaud.amtchat.service.MessageService
-import com.amarchaud.amtchat.viewmodel.ItemChatViewModel
+import com.amarchaud.amtchat.model.app.ItemChatViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class ChatViewModel(
+class TchatViewModel(
     private val app: Application,
     private val ChatUser: FirebaseUserModel
-) :
-    BaseViewModel(app) {
+) : AndroidViewModel(app) {
 
     companion object {
         const val TAG = "ChatViewModel"
@@ -37,18 +35,19 @@ class ChatViewModel(
         }
     }
 
-    @Bindable
-    var theMessage: String? = null
-
+    // two way binding
+    val theMessage = MutableLiveData<String?>()
 
     init {
         listenForMessages()
     }
 
-    private var listOfMessages: MutableList<ItemChatViewModel> = mutableListOf()
-    var listOfMessagesLiveData: MutableLiveData<Triple<List<ItemChatViewModel>, typeItem, Int>> =
-        MutableLiveData()
 
+    private val _listOfMessagesLiveData = MutableLiveData<Triple<List<ItemChatViewModel>, typeItem, Int>>()
+    val listOfMessagesLiveData: LiveData<Triple<List<ItemChatViewModel>, typeItem, Int>>
+        get() = _listOfMessagesLiveData
+
+    private var listOfMessages: MutableList<ItemChatViewModel> = mutableListOf()
 
     private fun listenForMessages() {
 
@@ -81,7 +80,7 @@ class ChatViewModel(
                         listOfMessages.add(ItemChatViewModel(chatMessage, ChatUser.profileImageUrl))
                     }
 
-                    listOfMessagesLiveData.postValue(
+                    _listOfMessagesLiveData.postValue(
                         Triple(
                             listOfMessages,
                             typeItem.ITEM_INSERTED,
@@ -112,7 +111,7 @@ class ChatViewModel(
                         firebaseChatMessageModel?.isRead = chatMessageModified?.isRead == true
                     }
 
-                    listOfMessagesLiveData.postValue(
+                    _listOfMessagesLiveData.postValue(
                         Triple(
                             listOfMessages,
                             typeItem.ITEM_MODIFIED,
@@ -136,7 +135,7 @@ class ChatViewModel(
                 if (pos >= 0) {
                     listOfMessages.removeAt(pos)
 
-                    listOfMessagesLiveData.postValue(
+                    _listOfMessagesLiveData.postValue(
                         Triple(
                             listOfMessages,
                             typeItem.ITEM_DELETED,
@@ -165,7 +164,7 @@ class ChatViewModel(
             FirebaseAddr.loadUserMessageForOnePerso(userUid, myUid) + "/" + fromRef.key
         )
 
-        theMessage?.let { theMessageNotNull ->
+        theMessage.value?.let { theMessageNotNull ->
 
             val f = FirebaseChatMessageModel(
                 fromRef.key!!,
@@ -181,18 +180,13 @@ class ChatViewModel(
             fromRef.setValue(f)
                 .addOnSuccessListener {
                     // mis a jour du flag isSent
-                    theMessage = null
-                    notifyPropertyChanged(BR.theMessage)
+                    theMessage.value = null
                 }
 
             // envoie du reverse (pour que lui retrouve la conversation)
             toRef.setValue(f)
         }
     }
-
-    /**
-     * Manage service
-     */
 
     private var mService: MessageService? = null
     private var bound: Boolean = false

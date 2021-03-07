@@ -2,31 +2,23 @@ package com.amarchaud.amtchat.ui.login
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
-import com.amarchaud.amtchat.databinding.LoginFragmentBinding
+import com.amarchaud.amtchat.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = LoginFragment()
-    }
-
-    private lateinit var binding: LoginFragmentBinding
+    private lateinit var binding: FragmentLoginBinding
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = LoginFragmentBinding.inflate(inflater, container, false)
+        binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 

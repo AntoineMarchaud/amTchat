@@ -7,13 +7,13 @@
 
         <variable
             name="ChatViewModel"
-            type="com.amarchaud.amtchat.ui.chat.ChatViewModel" />
+            type="com.amarchaud.amtchat.ui.tchat.TchatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.chat.ChatFragment">
+        tools:context=".ui.tchat.TchatFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview_chat_log"

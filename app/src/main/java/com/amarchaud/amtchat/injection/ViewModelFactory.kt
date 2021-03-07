@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.amarchaud.amtchat.model.FirebaseUserModel
-import com.amarchaud.amtchat.ui.chat.ChatViewModel
+import com.amarchaud.amtchat.ui.tchat.TchatViewModel
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val app: Application) : ViewModelProvider.Factory {
@@ -20,8 +20,8 @@ class ViewModelFactory(private val app: Application) : ViewModelProvider.Factory
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 
-        if (modelClass.isAssignableFrom(ChatViewModel::class.java)) {
-            return ChatViewModel(app, chatUser) as T
+        if (modelClass.isAssignableFrom(TchatViewModel::class.java)) {
+            return TchatViewModel(app, chatUser) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")

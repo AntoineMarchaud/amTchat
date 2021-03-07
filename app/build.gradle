@@ -52,7 +52,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
@@ -77,13 +77,13 @@ dependencies {
     // Feature module Support
     implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
     // Jetpack Compose Integration
-    implementation "androidx.navigation:navigation-compose:1.0.0-alpha07"
+    implementation "androidx.navigation:navigation-compose:1.0.0-alpha08"
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:26.1.1')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-core:18.0.2'
-    implementation 'com.google.firebase:firebase-auth:20.0.2' // login
+    implementation 'com.google.firebase:firebase-auth:20.0.3' // login
     implementation 'com.google.firebase:firebase-storage:19.2.1' // images
     implementation 'com.google.firebase:firebase-database:19.6.0' // messages
 

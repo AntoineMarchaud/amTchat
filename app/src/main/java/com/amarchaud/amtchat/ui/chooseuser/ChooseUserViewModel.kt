@@ -2,8 +2,9 @@ package com.amarchaud.amtchat.ui.chooseuser
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.amarchaud.amtchat.base.BaseViewModel
 import com.amarchaud.amtchat.model.FirebaseUserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -11,7 +12,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-class ChooseUserViewModel(app: Application) : BaseViewModel(app) {
+class ChooseUserViewModel(app: Application) : AndroidViewModel(app) {
 
     companion object {
         const val TAG: String = "ChooseUserViewModel"
@@ -21,8 +22,13 @@ class ChooseUserViewModel(app: Application) : BaseViewModel(app) {
         fetchUsers()
     }
 
-    var listOfUsersLiveData: MutableLiveData<List<FirebaseUserModel>> = MutableLiveData()
-    var MyselfLiveData: MutableLiveData<FirebaseUserModel> = MutableLiveData()
+    private val _listOfUsersLiveData = MutableLiveData<List<FirebaseUserModel>>()
+    val listOfUsersLiveData: LiveData<List<FirebaseUserModel>>
+        get() = _listOfUsersLiveData
+
+    private val _myselfLiveData = MutableLiveData<FirebaseUserModel>()
+    val myselfLiveData: LiveData<FirebaseUserModel>
+        get() = _myselfLiveData
 
     private fun fetchUsers() {
         val ref = FirebaseDatabase.getInstance().getReference("/users")
@@ -38,10 +44,10 @@ class ChooseUserViewModel(app: Application) : BaseViewModel(app) {
                         if (it.uid != FirebaseAuth.getInstance().uid) {// do not add myself
                             l.add(it)
                         } else {
-                            MyselfLiveData.postValue(it)
+                            _myselfLiveData.postValue(it)
                         }
                     }
-                    listOfUsersLiveData.postValue(l)
+                    _listOfUsersLiveData.postValue(l)
                 }
             }
 

@@ -9,10 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.amarchaud.amtchat.R
 import com.amarchaud.amtchat.databinding.ItemLastMessageBinding
-import com.amarchaud.amtchat.model.FirebaseUserModel
-import com.amarchaud.amtchat.ui.chooseuser.ChooseUserFragmentDirections
 import com.amarchaud.amtchat.ui.lastmessages.LastMessagesFragmentDirections
-import com.amarchaud.amtchat.viewmodel.ItemLastMessageViewModel
+import com.amarchaud.amtchat.model.app.ItemLastMessageViewModel
 
 class LastMessagesRecyclerAdapter :
     ListAdapter<ItemLastMessageViewModel, LastMessagesRecyclerAdapter.LastMessageViewHolder>(

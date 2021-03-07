@@ -1,4 +1,4 @@
-package com.amarchaud.amtchat.viewmodel
+package com.amarchaud.amtchat.model.app
 
 import com.amarchaud.amtchat.model.FirebaseChatMessageModel
 

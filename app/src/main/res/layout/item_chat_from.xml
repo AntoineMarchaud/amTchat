@@ -11,7 +11,7 @@
 
         <variable
             name="ItemChatViewModel"
-            type="com.amarchaud.amtchat.viewmodel.ItemChatViewModel" />
+            type="com.amarchaud.amtchat.model.app.ItemChatViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"

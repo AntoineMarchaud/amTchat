@@ -8,7 +8,7 @@ buildscript {
     ext.dagger2_version = '2.31.2'
     ext.glide_version = '4.11.0'
     ext.nav_version = "2.3.3"
-    ext.room_version = '2.3.0-beta01'
+    ext.room_version = '2.3.0-beta02'
     ext.work_version = '2.5.0'
     repositories {
         google()
