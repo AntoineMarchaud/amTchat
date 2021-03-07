@@ -40,15 +40,7 @@ class CreateAccountViewModel(private val app: Application) : AndroidViewModel(ap
     val password = MutableLiveData<String?>()
     val passwordBis = MutableLiveData<String?>()
 
-
-    private val _selectedPhotoUri = SingleLiveEvent<Uri?>()
-    val selectedPhotoUri: LiveData<Uri?>
-        get() = _selectedPhotoUri
-
-    private val _pickPhotoAction = SingleLiveEvent<Boolean>()
-    val pickPhotoAction: LiveData<Boolean>
-        get() = _pickPhotoAction
-
+    private var selectedPhotoUri : Uri? = null
 
     private val _actionToNextScreen = SingleLiveEvent<NavDirections>()
     val actionToNextScreen: LiveData<NavDirections>
@@ -121,13 +113,8 @@ class CreateAccountViewModel(private val app: Application) : AndroidViewModel(ap
         _actionToNextScreen.postValue(action)
     }
 
-    fun onSelectPhoto() {
-        Log.d(TAG, "Try to show photo selector")
-        _pickPhotoAction.postValue(true)
-    }
-
     fun onSelectedPhoto(uri: Uri?) {
-        _selectedPhotoUri.value = uri
+        selectedPhotoUri = uri
     }
 
 
@@ -137,13 +124,13 @@ class CreateAccountViewModel(private val app: Application) : AndroidViewModel(ap
      */
     private fun uploadImageToFirebaseStorage() {
 
-        if (selectedPhotoUri.value == null)
+        if (selectedPhotoUri == null)
             return
 
         // create a random UID for the image
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
-        ref.putFile(selectedPhotoUri.value!!)
+        ref.putFile(selectedPhotoUri!!)
             .addOnSuccessListener { it ->
 
                 Log.d(TAG, "Successfully uploaded image: ${it.metadata?.path}")

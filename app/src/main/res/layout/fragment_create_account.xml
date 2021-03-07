@@ -15,20 +15,18 @@
         android:layout_height="match_parent"
         tools:context=".ui.createaccount.CreateAccountFragment">
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/selectphoto_button_register"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="32dp"
-            android:onClick="@{(v) ->CreateAccountViewModel.onSelectPhoto()}"
-            android:scaleType="centerInside"
+            android:scaleType="center"
             android:text="@string/selectPhoto"
             android:textColor="@android:color/black"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:onImageLoadFromUri="@{CreateAccountViewModel.selectedPhotoUri}" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <EditText
             android:id="@+id/username_edittext_register"
