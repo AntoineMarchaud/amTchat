@@ -1,4 +1,4 @@
-# amTchat
+# amTchat (deprecated - no Firebase access for this project anymore)
 
 A simple tchat application.
 
